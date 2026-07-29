@@ -23,19 +23,15 @@ alert("Error submitting question.");
 
 }
 
-export { saveQuestion };
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 async function getQuestions() {
   const snapshot = await getDocs(collection(db, "questions"));
   const questions = [];
   snapshot.forEach((doc) => {
-    questions.push({
-      id: doc.id,
-      ...doc.data()
-    });
+    questions.push({ id: doc.id, ...doc.data() });
   });
   return questions;
 }
 
-export { getQuestions };
+export { saveQuestion, getQuestions };
