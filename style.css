@@ -470,3 +470,42 @@ transition:.3s;
 background:#1d4ed8;
 
 }
+/* ===========================
+   MOBILE RESPONSIVE FIXES
+   =========================== */
+@media screen and (max-width: 768px) {
+  header {
+    flex-direction: column;
+    padding: 15px 5% !important;
+    gap: 15px;
+    text-align: center;
+  }
+
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .hero {
+    flex-direction: column;
+    padding: 20px 5% !important;
+    text-align: center;
+  }
+
+  .hero-content, .hero-image {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .hero-image img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  section, .container, main {
+    width: 100% !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+}
