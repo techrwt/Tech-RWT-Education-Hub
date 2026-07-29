@@ -385,3 +385,75 @@ color:#cbd5e1;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
+.doubt-form{
+
+padding:80px 8%;
+
+max-width:800px;
+
+margin:auto;
+
+}
+
+.doubt-form h2{
+
+text-align:center;
+
+margin-bottom:35px;
+
+font-size:36px;
+
+}
+
+.doubt-form form{
+
+display:flex;
+
+flex-direction:column;
+
+gap:20px;
+
+}
+
+.doubt-form input,
+.doubt-form textarea{
+
+padding:18px;
+
+font-size:16px;
+
+border:1px solid #ddd;
+
+border-radius:12px;
+
+outline:none;
+
+}
+
+.doubt-form button{
+
+padding:18px;
+
+background:#2563eb;
+
+color:white;
+
+border:none;
+
+border-radius:12px;
+
+font-size:18px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.doubt-form button:hover{
+
+background:#1d4ed8;
+
+}
