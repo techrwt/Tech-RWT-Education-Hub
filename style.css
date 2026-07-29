@@ -364,3 +364,24 @@ margin-top:10px;
 color:#cbd5e1;
 
 }
+/* Logo & Banner Custom Styling */
+.logo img {
+  height: 45px;
+  width: auto;
+  display: block;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.hero-image img {
+  max-width: 420px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
