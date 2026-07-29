@@ -22,6 +22,5 @@ async function loadQuestions() {
       </tr>
     `;
   });
-}
 
 loadQuestions();
