@@ -33,17 +33,14 @@
   <!-- Firebase Integration -->
   <script type="module">
     import { db } from "../firebase/config.js";
-    import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const answersContainer = document.getElementById("answers-container");
 
     async function fetchAnswers() {
       try {
         // Sirf un doubts ko mangwao jinka status 'answered' hai
-        const q = query(
-          collection(db, "questions"),
-          where("status", "==", "answered")
-        );
+        const q = query(collection(db, "questions"), where("status", "==", "answered"));
         
         const querySnapshot = await getDocs(q);
         answersContainer.innerHTML = "";
