@@ -1,1 +1,271 @@
+/* ===========================
+   TECH RWT EDUCATION HUB
+=========================== */
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f8fbff;
+color:#1e293b;
+line-height:1.6;
+}
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+/* Header */
+
+header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:18px 8%;
+
+background:#ffffff;
+
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+position:sticky;
+
+top:0;
+
+z-index:1000;
+
+}
+
+.logo{
+
+font-size:30px;
+
+font-weight:700;
+
+color:#2563eb;
+
+}
+
+.logo span{
+
+display:block;
+
+font-size:15px;
+
+color:#64748b;
+
+font-weight:500;
+
+}
+
+nav{
+
+display:flex;
+
+gap:28px;
+
+}
+
+nav a{
+
+font-weight:500;
+
+transition:.3s;
+
+}
+
+nav a:hover{
+
+color:#2563eb;
+
+}
+
+/* Hero */
+
+.hero{
+
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+color:#fff;
+
+padding:100px 8%;
+
+text-align:center;
+
+}
+
+.hero h1{
+
+font-size:58px;
+
+line-height:1.2;
+
+margin-bottom:20px;
+
+}
+
+.hero p{
+
+max-width:700px;
+
+margin:auto;
+
+font-size:18px;
+
+margin-bottom:35px;
+
+}
+
+.search-box{
+
+display:flex;
+
+justify-content:center;
+
+gap:10px;
+
+flex-wrap:wrap;
+
+}
+
+.search-box input{
+
+width:500px;
+
+max-width:90%;
+
+padding:16px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+}
+
+.search-box button{
+
+padding:16px 28px;
+
+border:none;
+
+background:#22c55e;
+
+color:white;
+
+font-weight:bold;
+
+border-radius:10px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.search-box button:hover{
+
+background:#16a34a;
+
+}
+
+/* Categories */
+
+.categories{
+
+padding:80px 8%;
+
+}
+
+.categories h2{
+
+text-align:center;
+
+font-size:38px;
+
+margin-bottom:45px;
+
+}
+
+.grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:25px;
+
+}
+
+.card{
+
+background:#fff;
+
+padding:35px;
+
+text-align:center;
+
+border-radius:18px;
+
+font-size:20px;
+
+font-weight:600;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+transition:.3s;
+
+cursor:pointer;
+
+}
+
+.card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 15px 35px rgba(37,99,235,.18);
+
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+header{
+
+flex-direction:column;
+
+gap:15px;
+
+}
+
+nav{
+
+flex-wrap:wrap;
+
+justify-content:center;
+
+}
+
+.hero h1{
+
+font-size:38px;
+
+}
+
+.hero p{
+
+font-size:16px;
+
+}
+
+}
