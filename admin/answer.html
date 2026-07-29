@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Answer Question | TECH RWT</title>
+
+<link rel="stylesheet" href="answer.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="left-panel">
+
+<h2>Question Details</h2>
+
+<p><strong>Name:</strong> <span id="studentName">Loading...</span></p>
+
+<p><strong>Class:</strong> <span id="studentClass">Loading...</span></p>
+
+<p><strong>Subject:</strong> <span id="studentSubject">Loading...</span></p>
+
+<h3>Question</h3>
+
+<div id="studentQuestion" class="question-box">
+
+Loading...
+
+</div>
+
+</div>
+
+<div class="right-panel">
+
+<h2>Write Answer</h2>
+
+<input
+type="text"
+id="answerTitle"
+placeholder="Answer Title">
+
+<textarea
+id="answerText"
+placeholder="Write complete answer..."
+rows="18"></textarea>
+
+<button id="publishBtn">
+
+Publish Answer
+
+</button>
+
+</div>
+
+</div>
+
+<script type="module" src="answer.js"></script>
+
+</body>
+
+</html>
