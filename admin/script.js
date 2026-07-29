@@ -1,32 +1,20 @@
-import { getQuestions } from "../firebase/database.js";
+const form = document.getElementById("loginForm");
+if (form) {
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
 
-const table = document.getElementById("questionsTable");
-
-async function loadQuestions() {
-  try {
-    const questions = await getQuestions();
-    table.innerHTML = "";
-    
-    if (questions.length === 0) {
-      table.innerHTML = `<tr><td colspan="5">No Questions Found</td></tr>`;
-      return;
-    }
-
-    questions.forEach((q) => {
-      table.innerHTML += `
-        <tr>
-          <td>${q.name}</td>
-          <td>${q.studentClass}</td>
-          <td>${q.subject}</td>
-          <td>${q.status}</td>
-          <td><a href="answer.html?id=${q.id}"><button>Answer</button></a></td>
-        </tr>
-      `;
+        if (username === "techrwt" && password === "123456") {
+            localStorage.setItem("adminLoggedIn", "true");
+            window.location.href = "dashboard.html";
+        } else {
+            document.getElementById("error").textContent = "Invalid Username or Password";
+        }
     });
-  } catch (error) {
-    console.error("Error loading questions:", error);
-    table.innerHTML = `<tr><td colspan="5">Error loading data</td></tr>`;
-  }
 }
 
-loadQuestions();
+window.logout = function () {
+    localStorage.removeItem("adminLoggedIn");
+    window.location.href = "login.html";
+}
