@@ -32,21 +32,21 @@
 
   <!-- Firebase Integration -->
   <script type="module">
+ <!-- Firebase Integration -->
+  <script type="module">
     import { db } from "../firebase/config.js";
-import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const answersContainer = document.getElementById("answers-container");
 
     async function fetchAnswers() {
       try {
-        // Sirf un doubts ko mangwao jinka status 'answered' hai
         const q = query(collection(db, "questions"), where("status", "==", "answered"));
-        
         const querySnapshot = await getDocs(q);
         answersContainer.innerHTML = "";
 
         if (querySnapshot.empty) {
-          answersContainer.innerHTML = "<p>Abhi tak koi answer publish nahi hua hai.</p>";
+          answersContainer.innerHTML = "<p style='text-align: center; color: #64748b; font-size: 16px; margin: 40px 0;'>Abhi tak koi answer publish nahi hua hai.</p>";
           return;
         }
 
@@ -56,22 +56,43 @@ import { collection, query, where, getDocs } from "https://www.gstatic.com/fireb
           card.className = "card";
           card.style.textAlign = "left";
           card.style.cursor = "default";
+          card.style.marginBottom = "20px";
+          card.style.padding = "20px";
+          card.style.borderRadius = "12px";
+          card.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.05)";
+          card.style.border = "1px solid #e2e8f0";
+          card.style.backgroundColor = "#ffffff";
           
           card.innerHTML = `
-            <h3 style="color: #2563eb; margin-bottom: 10px;">❓ ${data.question || data.subject || "Doubt"}</h3>
-            <p style="margin-bottom: 15px; color: #334155;"><strong>Answer:</strong> ${data.answer || "Answer details..."}</p>
-            <small style="color: #64748b;">Subject: ${data.subject || 'General'} | Student: ${data.name || 'Anonymous'}</small>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
+              <span style="background-color: #e0e7ff; color: #3730a3; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase;">
+                ${data.subject || 'General'}
+              </span>
+              <small style="color: #64748b; font-size: 13px;">Class: ${data.studentClass || 'N/A'}</small>
+            </div>
+
+            <h3 style="color: #1e293b; font-size: 18px; margin-bottom: 12px; font-weight: 600; line-height: 1.4;">
+              ❓ ${data.question || "Doubt"}
+            </h3>
+
+            <div style="background-color: #f8fafc; border-left: 4px solid #2563eb; padding: 12px 16px; border-radius: 6px; margin-bottom: 12px;">
+              <p style="margin: 0; color: #334155; font-size: 15px; line-height: 1.6;">
+                <strong style="color: #2563eb;">Answer:</strong> ${data.answer || "No answer provided"}
+              </p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; color: #94a3b8; font-size: 12px;">
+              <span>Student: <strong>${data.name || 'Anonymous'}</strong></span>
+            </div>
           `;
           
           answersContainer.appendChild(card);
         });
       } catch (error) {
         console.error("Error fetching answers:", error);
-        answersContainer.innerHTML = "<p style='color: red;'>Answers load karne me problem aayi. Please refresh karein.</p>";
+        answersContainer.innerHTML = "<p style='color: red; text-align: center;'>Answers load karne me problem aayi.</p>";
       }
     }
 
     fetchAnswers();
-  </script>
-</body>
-</html>
+  </script>  
