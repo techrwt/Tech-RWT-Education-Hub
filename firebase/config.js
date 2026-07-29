@@ -2,12 +2,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
+  apiKey: "AIzaSyD3S1wg31KRNbFPm483H-JZH1aFSUV4Org",
   authDomain: "tech-rwt-education-hub.firebaseapp.com",
   projectId: "tech-rwt-education-hub",
-  storageBucket: "tech-rwt-education-hub.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  storageBucket: "tech-rwt-education-hub.firebasestorage.app",
+  messagingSenderId: "883411092191",
+  appId: "1:883411092191:web:8d6d96b29034cecf119f6a",
+  measurementId: "G-B5DP95WY9C"
 };
 
 // Initialize Firebase
