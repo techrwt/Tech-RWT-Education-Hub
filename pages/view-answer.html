@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Answer - Tech RWT Education Hub</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .container { max-width: 800px; margin: 30px auto; padding: 25px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { color: #222; margin-bottom: 15px; }
+        .meta { color: #777; font-size: 13px; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .content { font-size: 16px; color: #444; line-height: 1.6; white-space: pre-wrap; }
+        .back-btn { display: inline-block; margin-top: 25px; color: #007bff; text-decoration: none; font-size: 14px; }
+        .back-btn:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
 
+    <div class="container">
+        <h1 id="answerTitle">Loading...</h1>
+        <div class="meta" id="answerMeta">Please wait...</div>
+        <div class="content" id="answerContent">Fetching answer details...</div>
+        <br>
+        <a href="answer.html" class="back-btn">← Back to Answers</a>
+    </div>
+
+    <script type="module">
+        import { db } from "../firebase/config.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const answerId = urlParams.get("id");
+
+        const answerTitle = document.getElementById("answerTitle");
+        const answerMeta = document.getElementById("answerMeta");
+        const answerContent = document.getElementById("answerContent");
+
+        async function loadFullAnswer() {
+            if (!answerId) {
+                answerTitle.innerText = "Error";
+                answerContent.innerText = "No Answer ID provided.";
+                return;
+            }
+
+            try {
+                const docRef = doc(db, "answers", answerId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    answerTitle.innerText = data.title;
+                    answerMeta.innerText = `Published on: ${new Date(data.createdAt).toLocaleDateString()}`;
+                    answerContent.innerText = data.answer;
+                } else {
+                    answerTitle.innerText = "Not Found";
+                    answerContent.innerText = "This answer does not exist or has been removed.";
+                }
+            } catch (error) {
+                console.error("Error fetching answer: ", error);
+                answerTitle.innerText = "Error";
+                answerContent.innerText = "Failed to load the answer.";
+            }
+        }
+
+        loadFullAnswer();
+    </script>
+</body>
+</html>
