@@ -41,7 +41,7 @@
       try {
         // Sirf un doubts ko mangwao jinka status 'answered' hai
         const q = query(
-          collection(db, "doubts"),
+          collection(db, "questions"),
           where("status", "==", "answered")
         );
         
