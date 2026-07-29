@@ -15,7 +15,7 @@ async function getQuestions() {
   const snapshot = await getDocs(collection(db, "questions"));
   const questions = [];
   snapshot.forEach((doc) => {
-    questions.path({
+    questions.push({
       id: doc.id,
       ...doc.data()
     });
