@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="../style.css">
     <style>
         .container { max-width: 800px; margin: 30px auto; padding: 25px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h1 { color: #222; margin-bottom: 15px; }
-        .meta { color: #777; font-size: 13px; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .content { font-size: 16px; color: #444; line-height: 1.6; white-space: pre-wrap; }
+        h2 { color: #222; margin-bottom: 10px; }
+        .meta { color: #777; font-size: 13px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .answer-box { background: #f9f9f9; padding: 15px; border-left: 4px solid #007bff; border-radius: 4px; font-size: 16px; color: #444; line-height: 1.6; white-space: pre-wrap; margin-top: 15px; }
         .back-btn { display: inline-block; margin-top: 25px; color: #007bff; text-decoration: none; font-size: 14px; }
         .back-btn:hover { text-decoration: underline; }
     </style>
@@ -17,11 +17,12 @@
 <body>
 
     <div class="container">
-        <h1 id="answerTitle">Loading...</h1>
-        <div class="meta" id="answerMeta">Please wait...</div>
-        <div class="content" id="answerContent">Fetching answer details...</div>
+        <h2 id="questionText">Loading question...</h2>
+        <div class="meta" id="questionMeta">Please wait...</div>
+        <div><strong>Expert Answer:</strong></div>
+        <div class="answer-box" id="answerContent">Fetching answer...</div>
         <br>
-        <a href="answer.html" class="back-btn">← Back to Answers</a>
+        <a href="answers.html" class="back-btn">← Back to Answers</a>
     </div>
 
     <script type="module">
@@ -29,35 +30,37 @@
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
         const urlParams = new URLSearchParams(window.location.search);
-        const answerId = urlParams.get("id");
+        const questionId = urlParams.get("id");
 
-        const answerTitle = document.getElementById("answerTitle");
-        const answerMeta = document.getElementById("answerMeta");
+        const questionText = document.getElementById("questionText");
+        const questionMeta = document.getElementById("questionMeta");
         const answerContent = document.getElementById("answerContent");
 
         async function loadFullAnswer() {
-            if (!answerId) {
-                answerTitle.innerText = "Error";
-                answerContent.innerText = "No Answer ID provided.";
+            if (!questionId) {
+                questionText.innerText = "Error";
+                answerContent.innerText = "No Question ID provided.";
                 return;
             }
 
             try {
-                const docRef = doc(db, "answers", answerId);
+                const docRef = doc(db, "questions", questionId);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    answerTitle.innerText = data.title;
-                    answerMeta.innerText = `Published on: ${new Date(data.createdAt).toLocaleDateString()}`;
-                    answerContent.innerText = data.answer;
+                    questionText.innerText = `Q: ${data.question}`;
+                    questionMeta.innerHTML = `Subject: <strong>${data.subject}</strong> | Class: <strong>${data.studentClass}</strong> | Asked by: <strong>${data.name}</strong>`;
+                    
+                    // Agar database me answer field hai toh wo dikhega, warna pending message
+                    answerContent.innerText = data.answer || "Answer text is missing or updating...";
                 } else {
-                    answerTitle.innerText = "Not Found";
-                    answerContent.innerText = "This answer does not exist or has been removed.";
+                    questionText.innerText = "Not Found";
+                    answerContent.innerText = "This question does not exist or has been removed.";
                 }
             } catch (error) {
                 console.error("Error fetching answer: ", error);
-                answerTitle.innerText = "Error";
+                questionText.innerText = "Error";
                 answerContent.innerText = "Failed to load the answer.";
             }
         }
