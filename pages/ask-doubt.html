@@ -55,26 +55,11 @@ Diploma, NIOS or Competitive Exams.
 <h2>Submit Your Question</h2>
 
 <form id="doubtForm">
+<input type="text" id="name" name="name" placeholder="Your Name" required>
+<input type="text" id="studentClass" name="studentClass" placeholder="Class / Course" required>
+<input type="text" id="subject" name="subject" placeholder="Subject" required>
+<textarea id="question" name="question" placeholder="Write your question..." rows="6" required></textarea>
 
-<input
-type="text"
-placeholder="Your Name"
-required>
-
-<input
-type="text"
-placeholder="Class / Course"
-required>
-
-<input
-type="text"
-placeholder="Subject"
-required>
-
-<textarea
-placeholder="Write your question..."
-rows="6"
-required></textarea>
 
 <button type="submit">
 
@@ -86,7 +71,7 @@ Submit Doubt
 
 </section>
 
-<script src="../script.js"></script>
+<script type="module" src="../script.js"></script>
 
 </body>
 
