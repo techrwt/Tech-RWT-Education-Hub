@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest Answers - Tech RWT Education Hub</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .container { max-width: 800px; margin: 30px auto; padding: 20px; }
+        .answer-card { background: #fff; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .answer-card h3 { margin-bottom: 10px; color: #333; }
+        .answer-card p { color: #666; font-size: 14px; margin-bottom: 15px; }
+        .read-btn { display: inline-block; background: #007bff; color: #fff; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 14px; }
+        .read-btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
 
+    <div class="container">
+        <h2>📘 Latest Answered Doubts</h2>
+        <div id="answersList" style="margin-top: 20px;">Loading answers...</div>
+    </div>
+
+    <script type="module">
+        import { db } from "../firebase/config.js";
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+        const answersList = document.getElementById("answersList");
+
+        async function loadAnswers() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "answers"));
+                if (querySnapshot.empty) {
+                    answersList.innerHTML = "<p>No answers published yet.</p>";
+                    return;
+                }
+
+                let html = "";
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    html += `
+                        <div class="answer-card">
+                            <h3>${data.title}</h3>
+                            <p>Status: <strong>${data.status}</strong></p>
+                            <a href="view-answer.html?id=${doc.id}" class="read-btn">Read Answer →</a>
+                        </div>
+                    `;
+                });
+                answersList.innerHTML = html;
+            } catch (error) {
+                console.error("Error loading answers: ", error);
+                answersList.innerHTML = "<p>Failed to load answers.</p>";
+            }
+        }
+
+        loadAnswers();
+    </script>
+</body>
+</html>
