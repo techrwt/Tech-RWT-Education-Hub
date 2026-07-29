@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebas
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD3S1wg31KRNbFPm483H-JZH1aFSUV4Org",
+  apiKey: "YOUR_API_KEY"
   authDomain: "tech-rwt-education-hub.firebaseapp.com",
   projectId: "tech-rwt-education-hub",
   storageBucket: "tech-rwt-education-hub.firebasestorage.app",
