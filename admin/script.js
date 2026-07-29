@@ -19,7 +19,7 @@ async function loadQuestions() {
           <td>${q.studentClass}</td>
           <td>${q.subject}</td>
           <td>${q.status}</td>
-          <td><button>Answer</button></td>
+          <td><a href="answer.html?id=${q.id}"><button>Answer</button></a></td>
         </tr>
       `;
     });
