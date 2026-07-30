@@ -86,7 +86,7 @@ async function loadDashboardStats() {
   if (!db) return;
 
   try {
-    const qSnapshot = await db.collection('questions').where("type", "==", "student").get();
+    const qSnapshot = await db.collection('questions').get();
     let publishedCount = 0;
     let studentQCount = 0;
     let unansweredCount = 0;
