@@ -93,7 +93,8 @@ async function loadDashboardStats() {
 
     qSnapshot.forEach(doc => {
       const data = doc.data();
-      if (data.type === 'article' || data.published === true) {
+      // Flexible check: agar type article hai ya published true hai ya answer field bhari hui hai
+      if (data.type === 'article' || data.published === true || (data.answer && data.answer.trim() !== '')) {
         publishedCount++;
       } else {
         studentQCount++;
@@ -124,21 +125,21 @@ async function loadDashboardStats() {
   }
 }
 
-// Load Published Answers
-async function loadAdminPublishedAnswers() {
+// Load Published Answers (Real-time or standard)
+function loadAdminPublishedAnswers() {
   const container = document.getElementById('admin-answers-list');
   if (!container || !db) return;
 
-  try {
-    const snapshot = await db.collection('questions').get();
+  db.collection('questions').onSnapshot((snapshot) => {
     container.innerHTML = '';
-
     let count = 0;
+
     snapshot.forEach(doc => {
       const data = doc.data();
       const docId = doc.id;
 
-      if (data.type === 'article' || data.published === true) {
+      // Agar article hai ya published true hai ya answer available hai
+      if (data.type === 'article' || data.published === true || (data.answer && data.answer.trim() !== '')) {
         count++;
         const card = document.createElement('div');
         card.style.cssText = 'background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #4e73df; position: relative;';
@@ -148,7 +149,7 @@ async function loadAdminPublishedAnswers() {
             <strong>${data.subject || 'General'}</strong> | ${data.category || 'All'}
           </div>
           <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 8px;">${data.question}</h3>
-          <p style="font-size: 14px; color: #475569; max-height: 80px; overflow: hidden; text-overflow: ellipsis; margin-bottom: 12px;">${data.answer}</p>
+          <p style="font-size: 14px; color: #475569; max-height: 80px; overflow: hidden; text-overflow: ellipsis; margin-bottom: 12px;">${data.answer || 'No answer provided'}</p>
           <div style="display: flex; gap: 10px;">
             <button onclick="editAnswer('${docId}')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">✏️ Edit</button>
             <button onclick="deleteAnswer('${docId}')" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">🗑️ Delete</button>
@@ -161,10 +162,10 @@ async function loadAdminPublishedAnswers() {
     if (count === 0) {
       container.innerHTML = '<p style="color: #64748b;">No published answers found.</p>';
     }
-
-  } catch (err) {
-    console.error("Error loading answers:", err);
-  }
+    loadDashboardStats();
+  }, (err) => {
+    console.error("Error loading published answers:", err);
+  });
 }
 
 // Edit Answer Function
@@ -197,7 +198,6 @@ window.deleteAnswer = async function(id) {
     try {
       await db.collection('questions').doc(id).delete();
       alert("✅ Answer deleted successfully!");
-      loadAdminPublishedAnswers();
       loadDashboardStats();
     } catch (err) {
       alert("Error deleting answer: " + err.message);
@@ -205,7 +205,7 @@ window.deleteAnswer = async function(id) {
   }
 };
 
-// Load Real-time Student Questions with Reply Option
+// Real-time Student Questions Loader with Reply Option
 function loadStudentQuestions() {
   const container = document.getElementById('student-questions-list');
   if (!container || !db) return;
@@ -218,7 +218,10 @@ function loadStudentQuestions() {
       const data = doc.data();
       const docId = doc.id;
 
-      if (data.type !== 'article' && data.published !== true) {
+      // Student question tabhi maana jayega jab wo article na ho aur published/answer status pending ho
+      const isArticle = data.type === 'article' || data.published === true || (data.answer && data.answer.trim() !== '' && data.status === 'answered');
+      
+      if (!isArticle) {
         count++;
         const isAnswered = data.status === 'answered';
         const card = document.createElement('div');
@@ -249,6 +252,7 @@ function loadStudentQuestions() {
     if (count === 0) {
       container.innerHTML = '<p style="color: #64748b;">No new questions submitted by students yet.</p>';
     }
+    loadDashboardStats();
   }, (err) => {
     console.error("Error loading student questions:", err);
   });
@@ -270,10 +274,11 @@ window.submitStudentAnswer = async function(docId) {
       answer: answerText,
       status: "answered",
       published: true,
+      type: "article", // Isko article bana diya taaki ye official Q&A me bhi dikhne lage
       answeredAt: new Date().toISOString()
     });
 
-    alert("✅ Answer successfully send ho gaya!");
+    alert("✅ Answer successfully send ho gaya aur publish ho gaya!");
   } catch (err) {
     console.error("Error updating answer:", err);
     alert("Error: " + err.message);
@@ -310,7 +315,6 @@ function setupFormListeners() {
 
         publishForm.reset();
         window.toggleAddForm();
-        loadAdminPublishedAnswers();
         loadDashboardStats();
       } catch (err) { alert('Error saving answer: ' + err.message); }
     });
@@ -326,7 +330,7 @@ function setupFormListeners() {
           category: document.getElementById('note-category').value,
           subject: document.getElementById('note-subject').value.trim(),
           link: document.getElementById('note-link').value.trim(),
-          description: document.getElementById('note-desc').value.trim(),
+        description: document.getElementById('note-desc').value.trim(),
           type: 'note',
           createdAt: new Date().toISOString()
         });
