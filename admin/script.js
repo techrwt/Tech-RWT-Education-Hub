@@ -81,7 +81,7 @@ function initFirebase() {
   document.head.appendChild(script1);
 })();
 
-// Real-Time Dashboard Overview Numbers
+// Real-Time Dashboard Overview Numbers (Exact & Correct Separation)
 async function loadDashboardStats() {
   if (!db) return;
 
@@ -93,8 +93,9 @@ async function loadDashboardStats() {
 
     qSnapshot.forEach(doc => {
       const data = doc.data();
-      // Flexible check: agar type article hai ya published true hai ya answer field bhari hui hai
-      if (data.type === 'article' || data.published === true || (data.answer && data.answer.trim() !== '')) {
+      const hasAnswer = data.answer && data.answer.trim() !== '';
+
+      if (hasAnswer || data.type === 'article') {
         publishedCount++;
       } else {
         studentQCount++;
@@ -125,7 +126,7 @@ async function loadDashboardStats() {
   }
 }
 
-// Load Published Answers (Real-time or standard)
+// Load ONLY Published Answers (No Student Doubts Mix)
 function loadAdminPublishedAnswers() {
   const container = document.getElementById('admin-answers-list');
   if (!container || !db) return;
@@ -137,9 +138,9 @@ function loadAdminPublishedAnswers() {
     snapshot.forEach(doc => {
       const data = doc.data();
       const docId = doc.id;
+      const hasAnswer = data.answer && data.answer.trim() !== '';
 
-      // Agar article hai ya published true hai ya answer available hai
-      if (data.type === 'article' || data.published === true || (data.answer && data.answer.trim() !== '')) {
+      if (hasAnswer || data.type === 'article') {
         count++;
         const card = document.createElement('div');
         card.style.cssText = 'background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #4e73df; position: relative;';
@@ -148,8 +149,8 @@ function loadAdminPublishedAnswers() {
           <div style="font-size: 12px; color: #64748b; margin-bottom: 5px;">
             <strong>${data.subject || 'General'}</strong> | ${data.category || 'All'}
           </div>
-          <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 8px;">${data.question}</h3>
-          <p style="font-size: 14px; color: #475569; max-height: 80px; overflow: hidden; text-overflow: ellipsis; margin-bottom: 12px;">${data.answer || 'No answer provided'}</p>
+          <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 8px;">${data.question || ''}</h3>
+          <p style="font-size: 14px; color: #475569; max-height: 80px; overflow: hidden; text-overflow: ellipsis; margin-bottom: 12px;">${data.answer}</p>
           <div style="display: flex; gap: 10px;">
             <button onclick="editAnswer('${docId}')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">✏️ Edit</button>
             <button onclick="deleteAnswer('${docId}')" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">🗑️ Delete</button>
@@ -205,7 +206,7 @@ window.deleteAnswer = async function(id) {
   }
 };
 
-// Real-time Student Questions Loader with Reply Option
+// Load ONLY Pending Student Doubts
 function loadStudentQuestions() {
   const container = document.getElementById('student-questions-list');
   if (!container || !db) return;
@@ -217,33 +218,24 @@ function loadStudentQuestions() {
     snapshot.forEach(doc => {
       const data = doc.data();
       const docId = doc.id;
+      const hasAnswer = data.answer && data.answer.trim() !== '';
 
-      // Student question tabhi maana jayega jab wo article na ho aur published/answer status pending ho
-      const isArticle = data.type === 'article' || data.published === true || (data.answer && data.answer.trim() !== '' && data.status === 'answered');
-      
-      if (!isArticle) {
+      if (!hasAnswer && data.type !== 'article') {
         count++;
-        const isAnswered = data.status === 'answered';
         const card = document.createElement('div');
-        card.style.cssText = `background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0; border-left: 4px solid ${isAnswered ? '#10b981' : '#f59e0b'};`;
+        card.style.cssText = `background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b;`;
         
         card.innerHTML = `
           <div style="font-size: 12px; color: #64748b; margin-bottom: 5px; display: flex; justify-content: space-between;">
             <span><strong>${data.subject || 'General'}</strong> | Student: ${data.studentName || 'Student'} (${data.studentClass || 'N/A'})</span>
-            <span style="font-weight: bold; color: ${isAnswered ? '#10b981' : '#f59e0b'};">${isAnswered ? '✅ Answered' : '⏳ Unanswered'}</span>
+            <span style="font-weight: bold; color: #f59e0b;">⏳ Pending Doubt</span>
           </div>
-          <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 10px;">${data.question}</h3>
+          <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 10px;">${data.question || ''}</h3>
           
-          ${isAnswered ? `
-            <div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 14px; color: #334155;">
-              <strong>Admin Answer:</strong> ${data.answer}
-            </div>
-          ` : `
-            <div style="margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
-              <textarea id="reply-text-${docId}" placeholder="Yahan apna answer likhein..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; margin-bottom: 6px; resize: vertical; box-sizing: border-box;"></textarea>
-              <button onclick="submitStudentAnswer('${docId}')" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">🚀 Send Answer & Publish</button>
-            </div>
-          `}
+          <div style="margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+            <textarea id="reply-text-${docId}" placeholder="Yahan apna answer likhein..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; margin-bottom: 6px; resize: vertical; box-sizing: border-box;"></textarea>
+            <button onclick="submitStudentAnswer('${docId}')" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">🚀 Send Answer & Publish</button>
+          </div>
         `;
         container.appendChild(card);
       }
@@ -274,17 +266,19 @@ window.submitStudentAnswer = async function(docId) {
       answer: answerText,
       status: "answered",
       published: true,
-      type: "article", // Isko article bana diya taaki ye official Q&A me bhi dikhne lage
+      type: "article",
       answeredAt: new Date().toISOString()
     });
 
     alert("✅ Answer successfully send ho gaya aur publish ho gaya!");
+    loadDashboardStats();
   } catch (err) {
     console.error("Error updating answer:", err);
     alert("Error: " + err.message);
   }
 };
 
+// Form Listeners for Answer, Notes, PYQ Forms
 function setupFormListeners() {
   const publishForm = document.getElementById('publish-answer-form');
   if (publishForm) {
@@ -330,7 +324,7 @@ function setupFormListeners() {
           category: document.getElementById('note-category').value,
           subject: document.getElementById('note-subject').value.trim(),
           link: document.getElementById('note-link').value.trim(),
-        description: document.getElementById('note-desc').value.trim(),
+          description: document.getElementById('note-desc').value.trim(),
           type: 'note',
           createdAt: new Date().toISOString()
         });
