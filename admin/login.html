@@ -82,9 +82,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Agar pehle se logged in hai toh seedha index par bhej do
+            // Agar pehle se logged in hai toh seedha dashboard par bhej do
             if (localStorage.getItem('adminLoggedIn') === 'true') {
-                window.location.href = 'index.html';
+                window.location.href = 'dashboard.html';
             }
 
             const loginForm = document.getElementById('loginForm');
@@ -99,7 +99,7 @@
                     // Yahan aap apna username aur password badal sakte hain
                     if (user === 'admin' && pass === 'admin123') {
                         localStorage.setItem('adminLoggedIn', 'true');
-                        window.location.href = 'index.html';
+                        window.location.href = 'dashboard.html';
                     } else {
                         if (errorEl) errorEl.innerText = '⚠️ Invalid Username or Password!';
                     }
