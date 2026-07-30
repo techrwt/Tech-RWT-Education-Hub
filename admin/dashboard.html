@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { display: flex; min-height: 100vh; background-color: #f4f6f9; }
-    
+
     /* Sidebar Layout */
     .sidebar { width: 250px; background: #1a1d24; color: #fff; padding: 20px; flex-shrink: 0; }
     .sidebar h2 { font-size: 20px; margin-bottom: 5px; color: #4e73df; }
@@ -15,130 +15,147 @@
     .sidebar ul { list-style: none; }
     .sidebar ul li { padding: 12px 15px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; color: #cbd5e1; transition: 0.2s; }
     .sidebar ul li:hover, .sidebar ul li.active { background: #4e73df; color: #fff; font-weight: 600; }
-    
+
     /* Main Content Area */
     .main-content { flex: 1; padding: 30px; background: #f8fafc; overflow-y: auto; }
     .content-section { display: none; }
     .content-section.active-section { display: block; }
-    
+
     /* Cards Overview */
-    .stats-cards { display: flex; gap: 20px; margin-top: 20px; }
-    .card { flex: 1; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
+    .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid #4e73df; }
     .card h3 { font-size: 14px; color: #64748b; margin-bottom: 10px; }
-    .card p { font-size: 28px; font-weight: bold; color: #1e293b; }
+    .card .value { font-size: 28px; font-weight: bold; color: #1e293b; }
+
+    /* Forms Box Styling */
+    .form-box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 20px; }
+    .form-box h2 { font-size: 18px; margin-bottom: 15px; color: #1e293b; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
+    .form-group textarea { resize: vertical; min-height: 100px; }
     
-    /* Forms & Buttons */
-    .btn-primary { background: #4e73df; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 500; }
-    .btn-primary:hover { background: #2e59d9; }
-    .card-form input, .card-form textarea, .card-form select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 6px; }
+    /* Buttons */
+    .btn-primary { background: #4e73df; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .btn-primary:hover { background: #3b59b6; }
+    .btn-action { padding: 10px 15px; margin-top: 15px; background: #22c55e; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar Navigation -->
+  <!-- SIDEBAR NAVIGATION -->
   <div class="sidebar">
-    <h2>TECH RWT</h2>
-    <p>Education Hub Admin</p>
+    <h2>TECH RWT Admin</h2>
+    <p>CMS & Dashboard</p>
     <ul>
-      <li id="menu-dashboard" class="active" onclick="switchSection('dashboard')">🏠 Dashboard</li>
-      <li id="menu-questions" onclick="switchSection('questions')">❓ Questions</li>
+      <li id="menu-overview" class="active" onclick="switchSection('overview')">📊 Overview</li>
       <li id="menu-answers" onclick="switchSection('answers')">📝 Answers / CMS</li>
-      <li id="menu-notes" onclick="switchSection('notes')">📚 Notes</li>
-      <li id="menu-pyq" onclick="switchSection('pyq')">📄 PYQ</li>
-      <li onclick="logout()" style="margin-top: 40px; color: #ef4444;">🚪 Logout</li>
+      <li id="menu-questions" onclick="switchSection('questions')">❓ Student Questions</li>
+      <li id="menu-notes" onclick="switchSection('notes')">📚 Notes Section</li>
+      <li id="menu-pyqs" onclick="switchSection('pyqs')">📄 PYQs Section</li>
+      <li style="margin-top: 40px; color: #ef4444;" onclick="logout()">🚪 Logout</li>
     </ul>
   </div>
 
-  <!-- Main Content Body -->
+  <!-- MAIN CONTENT CONTAINER -->
   <div class="main-content">
-    
-    <!-- 1. DASHBOARD OVERVIEW -->
-    <div id="section-dashboard" class="content-section active-section">
+
+    <!-- 1. OVERVIEW SECTION -->
+    <div id="section-overview" class="content-section active-section">
       <h1>Dashboard Overview</h1>
-      <div class="stats-cards">
-        <div class="card"><h3>Total Questions</h3><p id="stat-total">0</p></div>
-        <div class="card"><h3>Pending</h3><p id="stat-pending">0</p></div>
-        <div class="card"><h3>Published Answers</h3><p id="stat-answers">0</p></div>
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Published Answers</h3>
+          <div class="value">Live</div>
+        </div>
+        <div class="card" style="border-left-color: #f59e0b;">
+          <h3>Student Questions</h3>
+          <div class="value">Active</div>
+        </div>
+        <div class="card" style="border-left-color: #10b981;">
+          <h3>Notes Available</h3>
+          <div class="value">Managed</div>
+        </div>
       </div>
     </div>
 
-    <!-- 2. STUDENT QUESTIONS -->
-    <div id="section-questions" class="content-section">
-      <h1>Student Questions</h1>
-      <p style="margin-top: 15px; color: #64748b;">No new questions submitted by students yet.</p>
-    </div>
-
-    <!-- 3. ANSWERS / CMS -->
+    <!-- 2. ANSWERS / CMS SECTION -->
     <div id="section-answers" class="content-section">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1>Manage Answers</h1>
-        <button class="btn-primary" onclick="toggleAddForm()">➕ Add New Answer</button>
-      </div>
+      <h1>Manage Published Answers</h1>
+      <button class="btn-action" onclick="toggleAddForm()">+ Add New Answer</button>
 
-      <div id="add-answer-form-box" class="card-form" style="display: none; background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
-        <h3 style="margin-bottom: 15px;">Publish New Answer / Article</h3>
+      <!-- Publish Form Container -->
+      <div id="add-answer-form-box" class="form-box" style="display: none;">
+        <h2>Publish New Answer</h2>
         <form id="publish-answer-form">
-          <div style="margin-bottom: 15px;">
-            <label><strong>Question Title:</strong></label>
-            <input type="text" id="ans-title" placeholder="e.g. What is DBMS?" required>
+          <div class="form-group">
+            <label>Question / Title</label>
+            <input type="text" id="ans-title" required placeholder="e.g. What is DBMS?">
           </div>
-          <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-            <div style="flex: 1;">
-              <label><strong>Subject:</strong></label>
-              <input type="text" id="ans-subject" placeholder="e.g. Computer Science" required>
-            </div>
-            <div style="flex: 1;">
-              <label><strong>Category / Course:</strong></label>
-              <input type="text" id="ans-category" placeholder="e.g. B.Tech" required>
-            </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <input type="text" id="ans-subject" required placeholder="e.g. DBMS, AI, Operating Systems">
           </div>
-          <div style="margin-bottom: 20px;">
-            <label><strong>Full Answer:</strong></label>
-            <textarea id="ans-body" rows="6" placeholder="Write answer details here..." required></textarea>
+          <div class="form-group">
+            <label>Category / Tag</label>
+            <input type="text" id="ans-category" required placeholder="e.g. Computer Science, AKTU">
+          </div>
+          <div class="form-group">
+            <label>Answer Content</label>
+            <textarea id="ans-body" required placeholder="Write complete detailed answer here..."></textarea>
           </div>
           <button type="submit" class="btn-primary">🚀 Publish Live</button>
           <button type="button" onclick="toggleAddForm()" style="padding: 10px 15px; margin-left: 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; cursor: pointer;">Cancel</button>
         </form>
       </div>
-    </div>
-<!-- Published Q&A Cards Yahan Render Honge -->
+
+      <!-- Published Answers List Container -->
       <div id="admin-answers-list" style="margin-top: 20px;">
         <p>Loading published answers...</p>
       </div>
+    </div>
+
+    <!-- 3. STUDENT QUESTIONS SECTION -->
+    <div id="section-questions" class="content-section">
+      <h1>Student Submitted Questions</h1>
+      <!-- Dedicated Container for Student Doubts -->
+      <div id="student-questions-list" style="margin-top: 20px;">
+        <p style="color: #64748b;">No new questions submitted by students yet.</p>
+      </div>
+    </div>
+
     <!-- 4. NOTES SECTION -->
     <div id="section-notes" class="content-section">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1>📚 Manage Notes</h1>
-        <button class="btn-primary" onclick="toggleNotesForm()">➕ Add New Note</button>
-      </div>
+      <h1>Manage Notes</h1>
+      <button class="btn-action" onclick="toggleNotesForm()">+ Upload New Note Link</button>
 
-      <div id="add-note-form-box" class="card-form" style="display: none; background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
-        <h3 style="margin-bottom: 15px;">Upload / Add New Note</h3>
+      <div id="add-note-form-box" class="form-box" style="display: none;">
+        <h2>Publish Note PDF</h2>
         <form id="publish-note-form">
-          <div style="margin-bottom: 15px;">
-            <label><strong>Note Heading / Title:</strong></label>
-            <input type="text" id="note-title" placeholder="e.g. Physics Chapter 1 Hand Written Notes" required>
+          <div class="form-group">
+            <label>Note Title</label>
+            <input type="text" id="note-title" required placeholder="e.g. Unit 1 DBMS Complete Notes">
           </div>
-          <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-            <div style="flex: 1;">
-              <label><strong>Category:</strong></label>
-              <select id="note-category" required>
-                <option value="Handwritten Notes">✍️ Handwritten Notes</option>
-                <option value="Computerized Notes">💻 Computerized Notes</option>
-              </select>
-            </div>
-            <div style="flex: 1;">
-              <label><strong>Subject:</strong></label>
-              <input type="text" id="note-subject" placeholder="e.g. Physics / Class 12" required>
-            </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="note-category">
+              <option value="B.Tech">B.Tech</option>
+              <option value="BCA">BCA</option>
+              <option value="Diploma">Diploma</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
-          <div style="margin-bottom: 15px;">
-            <label><strong>Drive / PDF Link:</strong></label>
-            <input type="url" id="note-link" placeholder="https://drive.google.com/..." required>
+          <div class="form-group">
+            <label>Subject</label>
+            <input type="text" id="note-subject" required placeholder="e.g. Database Management Systems">
           </div>
-          <div style="margin-bottom: 20px;">
-            <label><strong>Description / Content:</strong></label>
-            <textarea id="note-desc" rows="4" placeholder="Brief details about these notes..."></textarea>
+          <div class="form-group">
+            <label>Drive/Download PDF Link</label>
+            <input type="url" id="note-link" required placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-group">
+            <label>Short Description</label>
+            <textarea id="note-desc" placeholder="Brief note summary..."></textarea>
           </div>
           <button type="submit" class="btn-primary">🚀 Publish Note</button>
           <button type="button" onclick="toggleNotesForm()" style="padding: 10px 15px; margin-left: 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; cursor: pointer;">Cancel</button>
@@ -146,36 +163,34 @@
       </div>
     </div>
 
-    <!-- 5. PYQ SECTION -->
-    <div id="section-pyq" class="content-section">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1>📄 Manage PYQs</h1>
-        <button class="btn-primary" onclick="togglePyqForm()">➕ Add PYQ</button>
-      </div>
+    <!-- 5. PYQS SECTION -->
+    <div id="section-pyqs" class="content-section">
+      <h1>Manage Previous Year Papers</h1>
+      <button class="btn-action" onclick="togglePyqForm()">+ Upload PYQ Link</button>
 
-      <div id="add-pyq-form-box" class="card-form" style="display: none; background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
-        <h3 style="margin-bottom: 15px;">Upload Previous Year Paper</h3>
+      <div id="add-pyq-form-box" class="form-box" style="display: none;">
+        <h2>Publish PYQ</h2>
         <form id="publish-pyq-form">
-          <div style="margin-bottom: 15px;">
-            <label><strong>Paper Heading / Title:</strong></label>
-            <input type="text" id="pyq-title" placeholder="e.g. 2023 DBMS End Sem Question Paper" required>
+          <div class="form-group">
+            <label>Paper Title / Year</label>
+            <input type="text" id="pyq-title" required placeholder="e.g. AKTU DBMS 2023-24 Paper">
           </div>
-          <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-            <div style="flex: 1;">
-              <label><strong>Category:</strong></label>
-              <select id="pyq-category" required>
-                <option value="Important PYQ">🔥 Important PYQ</option>
-                <option value="All PYQ">📁 All PYQ (All Papers)</option>
-              </select>
-            </div>
-            <div style="flex: 1;">
-              <label><strong>Subject / Course:</strong></label>
-              <input type="text" id="pyq-subject" placeholder="e.g. Computer Science" required>
-            </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="pyq-category">
+              <option value="B.Tech">B.Tech</option>
+              <option value="BCA">BCA</option>
+              <option value="Diploma">Diploma</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
-          <div style="margin-bottom: 20px;">
-            <label><strong>PDF Link:</strong></label>
-            <input type="url" id="pyq-link" placeholder="https://drive.google.com/..." required>
+          <div class="form-group">
+            <label>Subject</label>
+            <input type="text" id="pyq-subject" required placeholder="e.g. DBMS">
+          </div>
+          <div class="form-group">
+            <label>PDF Link</label>
+            <input type="url" id="pyq-link" required placeholder="https://drive.google.com/...">
           </div>
           <button type="submit" class="btn-primary">🚀 Publish PYQ</button>
           <button type="button" onclick="togglePyqForm()" style="padding: 10px 15px; margin-left: 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; cursor: pointer;">Cancel</button>
@@ -185,6 +200,7 @@
 
   </div>
 
+  <!-- Include App Logic JavaScript File -->
   <script src="script.js"></script>
 </body>
 </html>
