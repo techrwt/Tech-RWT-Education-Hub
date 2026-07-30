@@ -27,15 +27,15 @@
     .card h3 { font-size: 14px; color: #64748b; margin-bottom: 10px; }
     .card p { font-size: 28px; font-weight: bold; color: #1e293b; }
     
-    /* CMS Form Box */
+    /* Forms & Buttons */
     .btn-primary { background: #4e73df; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 500; }
     .btn-primary:hover { background: #2e59d9; }
-    .card-form input, .card-form textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 6px; }
+    .card-form input, .card-form textarea, .card-form select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 6px; }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
+  <!-- Sidebar Navigation -->
   <div class="sidebar">
     <h2>TECH RWT</h2>
     <p>Education Hub Admin</p>
@@ -49,10 +49,10 @@
     </ul>
   </div>
 
-  <!-- Main Content -->
+  <!-- Main Content Body -->
   <div class="main-content">
     
-    <!-- 1. DASHBOARD -->
+    <!-- 1. DASHBOARD OVERVIEW -->
     <div id="section-dashboard" class="content-section active-section">
       <h1>Dashboard Overview</h1>
       <div class="stats-cards">
@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <!-- 2. QUESTIONS -->
+    <!-- 2. STUDENT QUESTIONS -->
     <div id="section-questions" class="content-section">
       <h1>Student Questions</h1>
       <p style="margin-top: 15px; color: #64748b;">No new questions submitted by students yet.</p>
@@ -75,7 +75,6 @@
         <button class="btn-primary" onclick="toggleAddForm()">➕ Add New Answer</button>
       </div>
 
-      <!-- ADD NEW ANSWER FORM -->
       <div id="add-answer-form-box" class="card-form" style="display: none; background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
         <h3 style="margin-bottom: 15px;">Publish New Answer / Article</h3>
         <form id="publish-answer-form">
@@ -103,14 +102,82 @@
       </div>
     </div>
 
-    <!-- 4. NOTES -->
+    <!-- 4. NOTES SECTION -->
     <div id="section-notes" class="content-section">
-      <h1>Notes Section</h1>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1>📚 Manage Notes</h1>
+        <button class="btn-primary" onclick="toggleNotesForm()">➕ Add New Note</button>
+      </div>
+
+      <div id="add-note-form-box" class="card-form" style="display: none; background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+        <h3 style="margin-bottom: 15px;">Upload / Add New Note</h3>
+        <form id="publish-note-form">
+          <div style="margin-bottom: 15px;">
+            <label><strong>Note Heading / Title:</strong></label>
+            <input type="text" id="note-title" placeholder="e.g. Physics Chapter 1 Hand Written Notes" required>
+          </div>
+          <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+              <label><strong>Category:</strong></label>
+              <select id="note-category" required>
+                <option value="Handwritten Notes">✍️ Handwritten Notes</option>
+                <option value="Computerized Notes">💻 Computerized Notes</option>
+              </select>
+            </div>
+            <div style="flex: 1;">
+              <label><strong>Subject:</strong></label>
+              <input type="text" id="note-subject" placeholder="e.g. Physics / Class 12" required>
+            </div>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label><strong>Drive / PDF Link:</strong></label>
+            <input type="url" id="note-link" placeholder="https://drive.google.com/..." required>
+          </div>
+          <div style="margin-bottom: 20px;">
+            <label><strong>Description / Content:</strong></label>
+            <textarea id="note-desc" rows="4" placeholder="Brief details about these notes..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary">🚀 Publish Note</button>
+          <button type="button" onclick="toggleNotesForm()" style="padding: 10px 15px; margin-left: 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; cursor: pointer;">Cancel</button>
+        </form>
+      </div>
     </div>
 
-    <!-- 5. PYQ -->
+    <!-- 5. PYQ SECTION -->
     <div id="section-pyq" class="content-section">
-      <h1>PYQ Section</h1>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1>📄 Manage PYQs</h1>
+        <button class="btn-primary" onclick="togglePyqForm()">➕ Add PYQ</button>
+      </div>
+
+      <div id="add-pyq-form-box" class="card-form" style="display: none; background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+        <h3 style="margin-bottom: 15px;">Upload Previous Year Paper</h3>
+        <form id="publish-pyq-form">
+          <div style="margin-bottom: 15px;">
+            <label><strong>Paper Heading / Title:</strong></label>
+            <input type="text" id="pyq-title" placeholder="e.g. 2023 DBMS End Sem Question Paper" required>
+          </div>
+          <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+              <label><strong>Category:</strong></label>
+              <select id="pyq-category" required>
+                <option value="Important PYQ">🔥 Important PYQ</option>
+                <option value="All PYQ">📁 All PYQ (All Papers)</option>
+              </select>
+            </div>
+            <div style="flex: 1;">
+              <label><strong>Subject / Course:</strong></label>
+              <input type="text" id="pyq-subject" placeholder="e.g. Computer Science" required>
+            </div>
+          </div>
+          <div style="margin-bottom: 20px;">
+            <label><strong>PDF Link:</strong></label>
+            <input type="url" id="pyq-link" placeholder="https://drive.google.com/..." required>
+          </div>
+          <button type="submit" class="btn-primary">🚀 Publish PYQ</button>
+          <button type="button" onclick="togglePyqForm()" style="padding: 10px 15px; margin-left: 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; cursor: pointer;">Cancel</button>
+        </form>
+      </div>
     </div>
 
   </div>
