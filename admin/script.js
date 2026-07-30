@@ -216,31 +216,47 @@ function loadStudentQuestions() {
     let count = 0;
 
     snapshot.forEach(doc => {
-      const data = doc.data();
-      const docId = doc.id;
-      const hasAnswer = data.answer && data.answer.trim() !== '';
+            const data = doc.data();
+            const docId = doc.id;
+            if (data.type === 'student') {
+                count++;
+                const isAnswered = data.status === 'answered';
+                const borderColor = isAnswered ? '#10b981' : '#f59e0b';
+                const badgeText = isAnswered ? '✅ Answered' : '⏳ Pending Doubt';
+                const badgeColor = isAnswered ? '#10b981' : '#f59e0b';
 
-      if (data.type === 'student') {
-        count++;
-        const card = document.createElement('div');
-        card.style.cssText = `background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b;`;
-        
-        card.innerHTML = `
-          <div style="font-size: 12px; color: #64748b; margin-bottom: 5px; display: flex; justify-content: space-between;">
-            <span><strong>${data.subject || 'General'}</strong> | Student: ${data.studentName || 'Student'} (${data.studentClass || 'N/A'})</span>
-            <span style="font-weight: bold; color: #f59e0b;">⏳ Pending Doubt</span>
-          </div>
-          <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 10px;">${data.question || ''}</h3>
-          
-          <div style="margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
-            <textarea id="reply-text-${docId}" placeholder="Yahan apna answer likhein..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; margin-bottom: 6px; resize: vertical; box-sizing: border-box;"></textarea>
-            <button onclick="submitStudentAnswer('${docId}')" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">🚀 Send Answer & Publish</button>
-          </div>
-        `;
-        container.appendChild(card);
-      }
-    });
+                const card = document.createElement('div');
+                card.style.cssText = `background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0; border-left: 4px solid ${borderColor};`;
+                
+                let actionArea = '';
+                if (!isAnswered) {
+                    actionArea = `
+                        <div style="margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+                            <textarea id="reply-text-${docId}" placeholder="Yahan apna answer likhein..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; margin-bottom: 6px; resize: vertical; box-sizing: border-box;"></textarea>
+                            <button onclick="submitStudentAnswer('${docId}')" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">🚀 Send Answer & Publish</button>
+                        </div>
+                    `;
+                } else {
+                    actionArea = `
+                        <div style="margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 10px; font-size: 14px; color: #334155;">
+                            <strong>Saved Answer:</strong>
+                            <p style="margin: 5px 0 8px 0; background: #f8fafc; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">${data.answer || ''}</p>
+                            <button onclick="editAnswer('${docId}')" style="background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600;">✏ Edit Answer</button>
+                        </div>
+                    `;
+                }
 
+                card.innerHTML = `
+                    <div style="font-size: 12px; color: #64748b; margin-bottom: 5px; display: flex; justify-content: space-between;">
+                        <span><strong>${data.subject || 'General'}</strong> | Student: ${data.studentName || 'Student'} (${data.studentClass || 'N/A'})</span>
+                        <span style="font-weight: bold; color: ${badgeColor};">${badgeText}</span>
+                    </div>
+                    <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 10px;">${data.question || ''}</h3>
+                    ${actionArea}
+                `;
+                container.appendChild(card);
+            }
+        });
     if (count === 0) {
       container.innerHTML = '<p style="color: #64748b;">No new questions submitted by students yet.</p>';
     }
