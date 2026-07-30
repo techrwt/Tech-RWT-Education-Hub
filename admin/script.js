@@ -207,15 +207,15 @@ window.deleteAnswer = async function(id) {
 };
 
 // Load Student Questions
-async function loadStudentQuestions() {
+function loadStudentQuestions() {
   const container = document.getElementById('student-questions-list');
   if (!container || !db) return;
 
-  try {
-    const snapshot = await db.collection('questions').get();
+  // Real-time listener: Jaise hi naya question aayega, yahan turant dikhega
+  db.collection('questions').onSnapshot((snapshot) => {
     container.innerHTML = '';
-
     let count = 0;
+
     snapshot.forEach(doc => {
       const data = doc.data();
       if (data.type !== 'article' && data.published !== true) {
@@ -223,9 +223,10 @@ async function loadStudentQuestions() {
         const isAnswered = data.status === 'answered';
         const card = document.createElement('div');
         card.style.cssText = `background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid ${isAnswered ? '#10b981' : '#f59e0b'};`;
+        
         card.innerHTML = `
           <div style="font-size: 12px; color: #64748b; margin-bottom: 5px; display: flex; justify-content: space-between;">
-            <span><strong>${data.subject || 'General'}</strong> | Student Doubt</span>
+            <span><strong>${data.subject || 'General'}</strong> | Student Doubt (${data.studentName || 'Student'})</span>
             <span style="font-weight: bold; color: ${isAnswered ? '#10b981' : '#f59e0b'};">${isAnswered ? '✅ Answered' : '⏳ Unanswered'}</span>
           </div>
           <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 8px;">${data.question}</h3>
@@ -237,7 +238,10 @@ async function loadStudentQuestions() {
     if (count === 0) {
       container.innerHTML = '<p style="color: #64748b;">No new questions submitted by students yet.</p>';
     }
-
+  }, (err) => {
+    console.error("Error loading student questions:", err);
+  });
+}
   } catch (err) {
     console.error("Error loading student questions:", err);
   }
