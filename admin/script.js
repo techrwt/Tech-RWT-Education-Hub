@@ -266,6 +266,7 @@ window.submitStudentAnswer = async function(docId) {
       answer: answerText,
       status: "answered",
       published: true,
+      type: "student",
       answeredAt: new Date().toISOString()
     });
 
