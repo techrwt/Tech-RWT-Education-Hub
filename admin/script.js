@@ -250,7 +250,7 @@ function loadStudentQuestions() {
   });
 }
 
-// Submit Answer for Student Doubt Function
+// Submit Answer for Student Doubt Function (Fixed)
 window.submitStudentAnswer = async function(docId) {
   const replyInput = document.getElementById(`reply-text-${docId}`);
   if (!replyInput) return;
@@ -266,7 +266,6 @@ window.submitStudentAnswer = async function(docId) {
       answer: answerText,
       status: "answered",
       published: true,
-      type: "article",
       answeredAt: new Date().toISOString()
     });
 
