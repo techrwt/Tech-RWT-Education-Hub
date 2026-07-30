@@ -4,29 +4,56 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TECH RWT Admin Panel</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { display: flex; min-height: 100vh; background-color: #f4f6f9; }
+    
+    /* Sidebar Layout */
+    .sidebar { width: 250px; background: #1a1d24; color: #fff; padding: 20px; flex-shrink: 0; }
+    .sidebar h2 { font-size: 20px; margin-bottom: 5px; color: #4e73df; }
+    .sidebar p { font-size: 12px; color: #a0a5b1; margin-bottom: 25px; }
+    .sidebar ul { list-style: none; }
+    .sidebar ul li { padding: 12px 15px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; color: #cbd5e1; transition: 0.2s; }
+    .sidebar ul li:hover, .sidebar ul li.active { background: #4e73df; color: #fff; font-weight: 600; }
+    
+    /* Main Content Area */
+    .main-content { flex: 1; padding: 30px; background: #f8fafc; overflow-y: auto; }
+    .content-section { display: none; }
+    .content-section.active-section { display: block; }
+    
+    /* Cards Overview */
+    .stats-cards { display: flex; gap: 20px; margin-top: 20px; }
+    .card { flex: 1; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    .card h3 { font-size: 14px; color: #64748b; margin-bottom: 10px; }
+    .card p { font-size: 28px; font-weight: bold; color: #1e293b; }
+    
+    /* CMS Form Box */
+    .btn-primary { background: #4e73df; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 500; }
+    .btn-primary:hover { background: #2e59d9; }
+    .card-form input, .card-form textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 6px; }
+  </style>
 </head>
 <body>
 
-  <!-- Sidebar Navigation -->
+  <!-- Sidebar -->
   <div class="sidebar">
     <h2>TECH RWT</h2>
-    <p>Education Hub</p>
+    <p>Education Hub Admin</p>
     <ul>
       <li id="menu-dashboard" class="active" onclick="switchSection('dashboard')">🏠 Dashboard</li>
       <li id="menu-questions" onclick="switchSection('questions')">❓ Questions</li>
       <li id="menu-answers" onclick="switchSection('answers')">📝 Answers / CMS</li>
       <li id="menu-notes" onclick="switchSection('notes')">📚 Notes</li>
       <li id="menu-pyq" onclick="switchSection('pyq')">📄 PYQ</li>
+      <li onclick="logout()" style="margin-top: 40px; color: #ef4444;">🚪 Logout</li>
     </ul>
   </div>
 
-  <!-- Main Content Area -->
+  <!-- Main Content -->
   <div class="main-content">
     
-    <!-- 1. DASHBOARD OVERVIEW -->
-    <div id="section-dashboard" class="content-section">
+    <!-- 1. DASHBOARD -->
+    <div id="section-dashboard" class="content-section active-section">
       <h1>Dashboard Overview</h1>
       <div class="stats-cards">
         <div class="card"><h3>Total Questions</h3><p id="stat-total">0</p></div>
@@ -35,68 +62,59 @@
       </div>
     </div>
 
-    <!-- 2. STUDENT QUESTIONS SECTION -->
-    <div id="section-questions" class="content-section" style="display: none;">
+    <!-- 2. QUESTIONS -->
+    <div id="section-questions" class="content-section">
       <h1>Student Questions</h1>
-      <div id="questions-list">
-        <p>Loading questions...</p>
-      </div>
+      <p style="margin-top: 15px; color: #64748b;">No new questions submitted by students yet.</p>
     </div>
 
-    <!-- 3. ANSWERS / CMS SECTION -->
-    <div id="section-answers" class="content-section" style="display: none;">
+    <!-- 3. ANSWERS / CMS -->
+    <div id="section-answers" class="content-section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h1>Manage Answers</h1>
         <button class="btn-primary" onclick="toggleAddForm()">➕ Add New Answer</button>
       </div>
 
       <!-- ADD NEW ANSWER FORM -->
-      <div id="add-answer-form-box" class="card-form" style="display: none; background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e0e0e0;">
-        <h2>Publish New Answer</h2>
+      <div id="add-answer-form-box" class="card-form" style="display: none; background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+        <h3 style="margin-bottom: 15px;">Publish New Answer / Article</h3>
         <form id="publish-answer-form">
-          <div style="margin-bottom: 12px;">
-            <label><strong>Question Title:</strong></label><br>
-            <input type="text" id="ans-title" placeholder="e.g. What is DBMS?" style="width: 100%; padding: 10px; margin-top: 5px;" required>
-          </div>
-          <div style="display: flex; gap: 15px; margin-bottom: 12px;">
-            <div style="flex: 1;">
-              <label><strong>Subject:</strong></label><br>
-              <input type="text" id="ans-subject" placeholder="e.g. Computer Science" style="width: 100%; padding: 10px; margin-top: 5px;" required>
-            </div>
-            <div style="flex: 1;">
-              <label><strong>Category / Course:</strong></label><br>
-              <input type="text" id="ans-category" placeholder="e.g. B.Tech / Class 12" style="width: 100%; padding: 10px; margin-top: 5px;" required>
-            </div>
-          </div>
           <div style="margin-bottom: 15px;">
-            <label><strong>Full Answer / Content:</strong></label><br>
-            <textarea id="ans-body" rows="6" placeholder="Write full simple explanation here..." style="width: 100%; padding: 10px; margin-top: 5px;" required></textarea>
+            <label><strong>Question Title:</strong></label>
+            <input type="text" id="ans-title" placeholder="e.g. What is DBMS?" required>
           </div>
-          <button type="submit" class="btn-primary" style="padding: 10px 20px; cursor: pointer;">🚀 Publish Live</button>
-          <button type="button" onclick="toggleAddForm()" style="padding: 10px 15px; margin-left: 10px; cursor: pointer;">Cancel</button>
+          <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+              <label><strong>Subject:</strong></label>
+              <input type="text" id="ans-subject" placeholder="e.g. Computer Science" required>
+            </div>
+            <div style="flex: 1;">
+              <label><strong>Category / Course:</strong></label>
+              <input type="text" id="ans-category" placeholder="e.g. B.Tech" required>
+            </div>
+          </div>
+          <div style="margin-bottom: 20px;">
+            <label><strong>Full Answer:</strong></label>
+            <textarea id="ans-body" rows="6" placeholder="Write answer details here..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary">🚀 Publish Live</button>
+          <button type="button" onclick="toggleAddForm()" style="padding: 10px 15px; margin-left: 10px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; cursor: pointer;">Cancel</button>
         </form>
       </div>
-
-      <!-- PUBLISHED ANSWERS LIST -->
-      <div id="published-answers-list">
-        <p>Loading published answers...</p>
-      </div>
     </div>
 
-    <!-- 4. NOTES SECTION (Future) -->
-    <div id="section-notes" class="content-section" style="display: none;">
+    <!-- 4. NOTES -->
+    <div id="section-notes" class="content-section">
       <h1>Notes Section</h1>
-      <p>Manage Notes here.</p>
     </div>
 
-    <!-- 5. PYQ SECTION (Future) -->
-    <div id="section-pyq" class="content-section" style="display: none;">
+    <!-- 5. PYQ -->
+    <div id="section-pyq" class="content-section">
       <h1>PYQ Section</h1>
-      <p>Manage Previous Year Question Papers here.</p>
     </div>
 
   </div>
 
-  <script src="dashboard.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
