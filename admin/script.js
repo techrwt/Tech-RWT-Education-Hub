@@ -220,7 +220,7 @@ function loadStudentQuestions() {
       const docId = doc.id;
       const hasAnswer = data.answer && data.answer.trim() !== '';
 
-      if (!hasAnswer && data.type !== 'article') {
+      if (data.type === 'student') {
         count++;
         const card = document.createElement('div');
         card.style.cssText = `background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b;`;
