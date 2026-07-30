@@ -205,7 +205,7 @@ window.deleteAnswer = async function(id) {
   }
 };
 
-// Load Real-time Student Questions
+// Load Real-time Student Questions with Reply Option
 function loadStudentQuestions() {
   const container = document.getElementById('student-questions-list');
   if (!container || !db) return;
@@ -216,18 +216,31 @@ function loadStudentQuestions() {
 
     snapshot.forEach(doc => {
       const data = doc.data();
+      const docId = doc.id;
+
       if (data.type !== 'article' && data.published !== true) {
         count++;
         const isAnswered = data.status === 'answered';
         const card = document.createElement('div');
-        card.style.cssText = `background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid ${isAnswered ? '#10b981' : '#f59e0b'};`;
+        card.style.cssText = `background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0; border-left: 4px solid ${isAnswered ? '#10b981' : '#f59e0b'};`;
         
         card.innerHTML = `
           <div style="font-size: 12px; color: #64748b; margin-bottom: 5px; display: flex; justify-content: space-between;">
-            <span><strong>${data.subject || 'General'}</strong> | Student Doubt (${data.studentName || 'Student'})</span>
+            <span><strong>${data.subject || 'General'}</strong> | Student: ${data.studentName || 'Student'} (${data.studentClass || 'N/A'})</span>
             <span style="font-weight: bold; color: ${isAnswered ? '#10b981' : '#f59e0b'};">${isAnswered ? '✅ Answered' : '⏳ Unanswered'}</span>
           </div>
-          <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 8px;">${data.question}</h3>
+          <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 10px;">${data.question}</h3>
+          
+          ${isAnswered ? `
+            <div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 14px; color: #334155;">
+              <strong>Admin Answer:</strong> ${data.answer}
+            </div>
+          ` : `
+            <div style="margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+              <textarea id="reply-text-${docId}" placeholder="Yahan apna answer likhein..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; margin-bottom: 6px; resize: vertical; box-sizing: border-box;"></textarea>
+              <button onclick="submitStudentAnswer('${docId}')" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">🚀 Send Answer & Publish</button>
+            </div>
+          `}
         `;
         container.appendChild(card);
       }
@@ -240,6 +253,32 @@ function loadStudentQuestions() {
     console.error("Error loading student questions:", err);
   });
 }
+
+// Submit Answer for Student Doubt Function
+window.submitStudentAnswer = async function(docId) {
+  const replyInput = document.getElementById(`reply-text-${docId}`);
+  if (!replyInput) return;
+
+  const answerText = replyInput.value.trim();
+  if (!answerText) {
+    alert("Kripya answer box me kuch likhein!");
+    return;
+  }
+
+  try {
+    await db.collection('questions').doc(docId).update({
+      answer: answerText,
+      status: "answered",
+      published: true,
+      answeredAt: new Date().toISOString()
+    });
+
+    alert("✅ Answer successfully send ho gaya!");
+  } catch (err) {
+    console.error("Error updating answer:", err);
+    alert("Error: " + err.message);
+  }
+};
 
 function setupFormListeners() {
   const publishForm = document.getElementById('publish-answer-form');
