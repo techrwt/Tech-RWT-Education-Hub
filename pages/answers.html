@@ -3,93 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Latest Answers - Tech RWT Education Hub</title>
+  <title>Answers & Solutions - TECH RWT</title>
   <link rel="stylesheet" href="../style.css">
+  <style>
+    .filter-tabs { display: flex; gap: 10px; margin: 20px 0; }
+    .tab-btn { padding: 10px 20px; border: 1px solid #007bff; background: #fff; color: #007bff; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: 500; }
+    .tab-btn.active { background: #007bff; color: #fff; }
+    .answers-container { margin-top: 20px; }
+    .answer-card { background: #fff; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .answer-card h3 { color: #333; margin-bottom: 8px; }
+    .answer-card .meta { font-size: 13px; color: #666; margin-bottom: 12px; }
+    .answer-card .badge { display: inline-block; background: #e3f2fd; color: #0d47a1; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+  </style>
 </head>
 <body>
+
+  <!-- Header Navigation -->
   <header>
-    <div class="logo">
-      Tech RWT <span>Education Hub</span>
-    </div>
+    <div class="logo">Tech RWT <span>Education Hub</span></div>
     <nav>
       <a href="../index.html">Home</a>
-      <a href="answers.html">Answers</a>
-      <a href="../index.html#doubt-section">Ask Doubt</a>
+      <a href="answers.html?filter=article" id="nav-article">📖 Q&A Solutions</a>
+      <a href="answers.html?filter=student" id="nav-student">❓ Student Doubts</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
     </nav>
   </header>
 
-  <section class="resources" style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
-    <h2 style="text-align: center; margin-bottom: 30px;">📘 Latest Answered Doubts</h2>
-    <div id="answers-container">
-      <p id="loading-text" style="text-align: center; color: #64748b;">Loading answers...</p>
+  <main style="max-width: 900px; margin: 30px auto; padding: 0 20px;">
+    <h1 id="page-title">Answers & Solutions</h1>
+
+    <!-- Filter Buttons / Tabs -->
+    <div class="filter-tabs">
+      <a href="answers.html?filter=article" id="tab-article" class="tab-btn">📖 Official Q&A Solutions</a>
+      <a href="answers.html?filter=student" id="tab-student" class="tab-btn">❓ Student Doubts</a>
     </div>
-  </section>
+
+    <!-- Answers List -->
+    <div id="answers-list" class="answers-container">
+      <p>Loading solutions...</p>
+    </div>
+  </main>
 
   <footer>
     <p>© Tech RWT Education Hub. All rights reserved.</p>
   </footer>
 
-  <!-- Firebase Integration -->
-  <script type="module">
-    import { db } from "../firebase/config.js";
-    import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-    const answersContainer = document.getElementById("answers-container");
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyD3S1wg31KRNbFPm483H-JZH1aFSUV4Org",
+      authDomain: "tech-rwt-education-hub.firebaseapp.com",
+      projectId: "tech-rwt-education-hub",
+      storageBucket: "tech-rwt-education-hub.firebasestorage.app",
+      messagingSenderId: "883411092191",
+      appId: "1:883411092191:web:8d6d96b29034cecf119f6a"
+    };
 
-    async function fetchAnswers() {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // Read URL Parameter (?filter=article ya ?filter=student)
+    const urlParams = new URLSearchParams(window.location.search);
+    const filterType = urlParams.get('filter') || 'article'; // Default 'article'
+
+    // UI Updates based on Active Filter
+    const pageTitle = document.getElementById('page-title');
+    const tabArticle = document.getElementById('tab-article');
+    const tabStudent = document.getElementById('tab-student');
+
+    if (filterType === 'student') {
+      pageTitle.innerText = "❓ Student Doubts & Community Solutions";
+      tabStudent.classList.add('active');
+    } else {
+      pageTitle.innerText = "📖 Official Q&A Solutions";
+      tabArticle.classList.add('active');
+    }
+
+    // Load Data from Firestore
+    async function loadAnswers() {
+      const container = document.getElementById('answers-list');
       try {
-        const q = query(collection(db, "questions"), where("status", "==", "answered"));
-        const querySnapshot = await getDocs(q);
-        answersContainer.innerHTML = "";
+        let query = db.collection('questions');
 
-        if (querySnapshot.empty) {
-          answersContainer.innerHTML = "<p style='text-align: center; color: #64748b; font-size: 16px; margin: 40px 0;'>Abhi tak koi answer publish nahi hua hai.</p>";
+        // Apply filter condition
+        if (filterType === 'article') {
+          query = query.where('type', '==', 'article');
+        } else if (filterType === 'student') {
+          query = query.where('type', '==', 'student');
+        }
+
+        const snapshot = await query.get();
+        container.innerHTML = '';
+
+        if (snapshot.empty) {
+          container.innerHTML = '<p style="color: #666; font-size: 16px;">No items found in this section yet.</p>';
           return;
         }
 
-        querySnapshot.forEach((doc) => {
+        snapshot.forEach(doc => {
           const data = doc.data();
-          const card = document.createElement("div");
-          card.style.textAlign = "left";
-          card.style.marginBottom = "24px";
-          card.style.padding = "20px";
-          card.style.borderRadius = "12px";
-          card.style.boxShadow = "0 4px 15px rgba(0, 0, 0, 0.06)";
-          card.style.border = "1px solid #e2e8f0";
-          card.style.backgroundColor = "#ffffff";
-          
+          const card = document.createElement('div');
+          card.className = 'answer-card';
           card.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
-              <span style="background-color: #2563eb; color: #ffffff; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;">
-                ${data.subject || 'General'}
-              </span>
-              <small style="color: #64748b; font-size: 13px; font-weight: 500;">Class: ${data.studentClass || 'N/A'}</small>
+            <div class="meta">
+              <span class="badge">${data.subject || 'General'}</span> • 
+              <span>${data.category || 'All Classes'}</span>
             </div>
-
-            <h3 style="color: #0f172a; font-size: 18px; margin-bottom: 14px; font-weight: 600; line-height: 1.5;">
-              ❓ ${data.question || "Doubt"}
-            </h3>
-
-            <div style="background-color: #f8fafc; border-left: 4px solid #2563eb; padding: 14px 16px; border-radius: 6px; margin-bottom: 14px;">
-              <p style="margin: 0; color: #334155; font-size: 15px; line-height: 1.6;">
-                <strong style="color: #2563eb;">Answer:</strong> ${data.answer || "No answer provided"}
-              </p>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; color: #64748b; font-size: 13px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-              <span>Asked by: <strong>${data.name || 'Anonymous'}</strong></span>
-            </div>
+            <h3>${data.question}</h3>
+            <p style="margin-top: 10px; line-height: 1.6; color: #444;">${data.answer || 'Answer coming soon...'}</p>
           `;
-          
-          answersContainer.appendChild(card);
+          container.innerHTML += card.outerHTML;
         });
+
       } catch (error) {
-        console.error("Error fetching answers:", error);
-        answersContainer.innerHTML = "<p style='color: red; text-align: center;'>Answers load karne me problem aayi.</p>";
+        console.error("Error loading answers:", error);
+        container.innerHTML = '<p style="color: red;">Failed to load answers. Please try again later.</p>';
       }
     }
 
-    fetchAnswers();
+    document.addEventListener('DOMContentLoaded', loadAnswers);
   </script>
 </body>
 </html>
