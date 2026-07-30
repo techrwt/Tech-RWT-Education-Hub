@@ -12,20 +12,24 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-// Student Doubt Form Submission Logic (Clean & Single Popup Fixed)
+// Global flag to prevent double execution in the same session lifecycle
+window._doubtSubmitting = false;
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("doubtForm") || document.getElementById("ask-doubt-form") || document.querySelector("form");
 
-  if (form) {
-    // Purane duplicate listeners ko completely clear karne ke liye clone
-    const cleanForm = form.cloneNode(true);
-    form.parentNode.replaceChild(cleanForm, form);
+  if (form && !form.hasAttribute("data-listener-attached")) {
+    form.setAttribute("data-listener-attached", "true");
 
-    cleanForm.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      e.stopImmediatePropagation(); // Ye double popup aane se rokega
+      e.stopImmediatePropagation();
+      e.stopPropagation();
 
-      const submitBtn = cleanForm.querySelector('button[type="submit"]');
+      if (window._doubtSubmitting) return;
+      window._doubtSubmitting = true;
+
+      const submitBtn = form.querySelector('button[type="submit"]');
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerText = "Submitting...";
@@ -38,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!questionVal) {
         alert("Please enter your question!");
+        window._doubtSubmitting = false;
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerText = "Submit Doubt";
@@ -61,19 +66,20 @@ document.addEventListener("DOMContentLoaded", () => {
           });
 
           alert("🎉 AAPKA QUESTION SUCCESSFULLY SUBMIT HO GAYA HAI!");
-          cleanForm.reset();
+          form.reset();
         } else {
-          alert("Firebase initialization pending. Please try again.");
+          alert("Firebase initialization pending.");
         }
       } catch (err) {
         console.error("Error submitting doubt:", err);
         alert("Error submitting question: " + err.message);
       } finally {
+        window._doubtSubmitting = false;
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerText = "Submit Doubt";
         }
       }
-    });
+    }, { once: false });
   }
 });
