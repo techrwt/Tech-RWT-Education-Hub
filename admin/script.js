@@ -93,9 +93,9 @@ async function loadDashboardStats() {
 
     qSnapshot.forEach(doc => {
       const data = doc.data();
-      const hasAnswer = data.answer && data.answer.trim() !== '';
+     const hasAnswer = data.answer && data.answer.trim() !== '';
 
-      if (hasAnswer || data.type === 'article') {
+      if (data.type === 'article') {
         publishedCount++;
       } else {
         studentQCount++;
@@ -140,7 +140,7 @@ function loadAdminPublishedAnswers() {
       const docId = doc.id;
       const hasAnswer = data.answer && data.answer.trim() !== '';
 
-      if (hasAnswer || data.type === 'article') {
+      if (data.type === 'article') {
         count++;
         const card = document.createElement('div');
         card.style.cssText = 'background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #4e73df; position: relative;';
