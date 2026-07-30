@@ -1,4 +1,4 @@
-// Tab Switcher
+// Global Functions for Inline Onclick Handlers
 window.switchSection = function(sectionName) {
   const sections = document.querySelectorAll('.content-section');
   sections.forEach(sec => sec.classList.remove('active-section'));
@@ -13,7 +13,6 @@ window.switchSection = function(sectionName) {
   if (targetMenu) targetMenu.classList.add('active');
 };
 
-// Form Toggles
 window.toggleAddForm = function() {
   const box = document.getElementById('add-answer-form-box');
   if (box) box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
@@ -29,28 +28,15 @@ window.togglePyqForm = function() {
   if (box) box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
 };
 
-// Logout
 window.logout = function() {
   localStorage.removeItem("adminLoggedIn");
   window.location.href = "login.html";
 };
 
-// Firebase Dynamic Loader
-(function loadFirebase() {
-  const script1 = document.createElement('script');
-  script1.src = "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js";
-  script1.onload = () => {
-    const script2 = document.createElement('script');
-    script2.src = "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js";
-    script2.onload = initApp;
-    document.head.appendChild(script2);
-  };
-  document.head.appendChild(script1);
-})();
-
+// Initialize App
 let db;
 
-function initApp() {
+function initFirebase() {
   const firebaseConfig = {
     apiKey: "AIzaSyD3S1wg31KRNbFPm483H-JZH1aFSUV4Org",
     authDomain: "tech-rwt-education-hub.firebaseapp.com",
@@ -60,15 +46,31 @@ function initApp() {
     appId: "1:883411092191:web:8d6d96b29034cecf119f6a"
   };
 
-  if (!firebase.apps.length) {
+  if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+  } else if (typeof firebase !== 'undefined') {
+    db = firebase.firestore();
   }
-  db = firebase.firestore();
 }
 
-// Form Handlers
-document.addEventListener('DOMContentLoaded', () => {
+// Dynamically Load Firebase Compat SDK
+(function loadFirebase() {
+  const script1 = document.createElement('script');
+  script1.src = "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js";
+  script1.onload = () => {
+    const script2 = document.createElement('script');
+    script2.src = "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js";
+    script2.onload = () => {
+      initFirebase();
+      setupFormListeners();
+    };
+    document.head.appendChild(script2);
+  };
+  document.head.appendChild(script1);
+})();
 
+function setupFormListeners() {
   // 1. ANSWERS FORM
   const publishForm = document.getElementById('publish-answer-form');
   if (publishForm) {
@@ -88,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('🚀 Answer published successfully!');
         publishForm.reset();
         window.toggleAddForm();
-      } catch (err) { alert('Error: ' + err.message); }
+      } catch (err) { alert('Error publishing answer: ' + err.message); }
     });
   }
 
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('🚀 Note published successfully!');
         noteForm.reset();
         window.toggleNotesForm();
-      } catch (err) { alert('Error: ' + err.message); }
+      } catch (err) { alert('Error publishing note: ' + err.message); }
     });
   }
 
@@ -131,8 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('🚀 PYQ published successfully!');
         pyqForm.reset();
         window.togglePyqForm();
-      } catch (err) { alert('Error: ' + err.message); }
+      } catch (err) { alert('Error publishing PYQ: ' + err.message); }
     });
   }
-
-});
+}
