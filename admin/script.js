@@ -64,11 +64,45 @@ function initFirebase() {
     script2.onload = () => {
       initFirebase();
       setupFormListeners();
+      loadAdminPublishedAnswers();
     };
     document.head.appendChild(script2);
   };
   document.head.appendChild(script1);
 })();
+
+// Load Published Answers in Admin Panel
+async function loadAdminPublishedAnswers() {
+  const container = document.getElementById('admin-answers-list');
+  if (!container || !db) return;
+
+  try {
+    const snapshot = await db.collection('questions').where('type', '==', 'article').get();
+    container.innerHTML = '';
+
+    if (snapshot.empty) {
+      container.innerHTML = '<p style="color: #64748b;">No published answers found.</p>';
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const card = document.createElement('div');
+      card.style.cssText = 'background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #4e73df;';
+      card.innerHTML = `
+        <div style="font-size: 12px; color: #64748b; margin-bottom: 5px;">
+          <strong>${data.subject || 'General'}</strong> | ${data.category || 'All'}
+        </div>
+        <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 8px;">${data.question}</h3>
+        <p style="font-size: 14px; color: #475569; max-height: 80px; overflow: hidden; text-overflow: ellipsis;">${data.answer}</p>
+      `;
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error("Error loading answers:", err);
+    container.innerHTML = '<p style="color: red;">Failed to load published items.</p>';
+  }
+}
 
 function setupFormListeners() {
   // 1. ANSWERS FORM
@@ -90,6 +124,7 @@ function setupFormListeners() {
         alert('🚀 Answer published successfully!');
         publishForm.reset();
         window.toggleAddForm();
+        loadAdminPublishedAnswers();
       } catch (err) { alert('Error publishing answer: ' + err.message); }
     });
   }
