@@ -1,114 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>TECH RWT Admin Panel</title>
-
-<link rel="stylesheet" href="style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TECH RWT Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
-<div class="sidebar">
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <h2>TECH RWT</h2>
+    <p>Education Hub</p>
+    <ul>
+      <li id="menu-dashboard" class="active" onclick="switchSection('dashboard')">🏠 Dashboard</li>
+      <li id="menu-questions" onclick="switchSection('questions')">❓ Questions</li>
+      <li id="menu-answers" onclick="switchSection('answers')">📝 Answers / CMS</li>
+      <li id="menu-notes" onclick="switchSection('notes')">📚 Notes</li>
+      <li id="menu-pyq" onclick="switchSection('pyq')">📄 PYQ</li>
+    </ul>
+  </div>
 
-<h2>TECH RWT</h2>
+  <!-- Main Content Area -->
+  <div class="main-content">
+    
+    <!-- 1. DASHBOARD OVERVIEW -->
+    <div id="section-dashboard" class="content-section">
+      <h1>Dashboard Overview</h1>
+      <div class="stats-cards">
+        <div class="card"><h3>Total Questions</h3><p id="stat-total">0</p></div>
+        <div class="card"><h3>Pending</h3><p id="stat-pending">0</p></div>
+        <div class="card"><h3>Published Answers</h3><p id="stat-answers">0</p></div>
+      </div>
+    </div>
 
-<p>Education Hub</p>
+    <!-- 2. STUDENT QUESTIONS SECTION -->
+    <div id="section-questions" class="content-section" style="display: none;">
+      <h1>Student Questions</h1>
+      <div id="questions-list">
+        <p>Loading questions...</p>
+      </div>
+    </div>
 
-<ul>
+    <!-- 3. ANSWERS / CMS SECTION -->
+    <div id="section-answers" class="content-section" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1>Manage Answers</h1>
+        <button class="btn-primary" onclick="toggleAddForm()">➕ Add New Answer</button>
+      </div>
 
-<li class="active">🏠 Dashboard</li>
+      <!-- ADD NEW ANSWER FORM -->
+      <div id="add-answer-form-box" class="card-form" style="display: none; background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e0e0e0;">
+        <h2>Publish New Answer</h2>
+        <form id="publish-answer-form">
+          <div style="margin-bottom: 12px;">
+            <label><strong>Question Title:</strong></label><br>
+            <input type="text" id="ans-title" placeholder="e.g. What is DBMS?" style="width: 100%; padding: 10px; margin-top: 5px;" required>
+          </div>
+          <div style="display: flex; gap: 15px; margin-bottom: 12px;">
+            <div style="flex: 1;">
+              <label><strong>Subject:</strong></label><br>
+              <input type="text" id="ans-subject" placeholder="e.g. Computer Science" style="width: 100%; padding: 10px; margin-top: 5px;" required>
+            </div>
+            <div style="flex: 1;">
+              <label><strong>Category / Course:</strong></label><br>
+              <input type="text" id="ans-category" placeholder="e.g. B.Tech / Class 12" style="width: 100%; padding: 10px; margin-top: 5px;" required>
+            </div>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label><strong>Full Answer / Content:</strong></label><br>
+            <textarea id="ans-body" rows="6" placeholder="Write full simple explanation here..." style="width: 100%; padding: 10px; margin-top: 5px;" required></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="padding: 10px 20px; cursor: pointer;">🚀 Publish Live</button>
+          <button type="button" onclick="toggleAddForm()" style="padding: 10px 15px; margin-left: 10px; cursor: pointer;">Cancel</button>
+        </form>
+      </div>
 
-<li>❓ Questions</li>
+      <!-- PUBLISHED ANSWERS LIST -->
+      <div id="published-answers-list">
+        <p>Loading published answers...</p>
+      </div>
+    </div>
 
-<li>📝 Answers</li>
+    <!-- 4. NOTES SECTION (Future) -->
+    <div id="section-notes" class="content-section" style="display: none;">
+      <h1>Notes Section</h1>
+      <p>Manage Notes here.</p>
+    </div>
 
-<li>📚 Notes</li>
+    <!-- 5. PYQ SECTION (Future) -->
+    <div id="section-pyq" class="content-section" style="display: none;">
+      <h1>PYQ Section</h1>
+      <p>Manage Previous Year Question Papers here.</p>
+    </div>
 
-<li>📄 PYQ</li>
+  </div>
 
-<li>👨‍🎓 Students</li>
-
-<li>⚙ Settings</li>
-<li onclick="logout()">🚪 Logout</li>
-</ul>
-
-</div>
-
-<div class="main">
-
-<header>
-
-<h1>Dashboard</h1>
-
-</header>
-
-<div class="cards">
-
-<div class="card">
-<h2>0</h2>
-<p>Total Questions</p>
-</div>
-
-<div class="card">
-<h2>0</h2>
-<p>Pending</p>
-</div>
-
-<div class="card">
-<h2>0</h2>
-<p>Answered</p>
-</div>
-
-<div class="card">
-<h2>0</h2>
-<p>Published</p>
-</div>
-
-</div>
-<div class="toolbar">
-  <input type="text" placeholder="🔍 Search Questions...">
-  <select>
-    <option>All Status</option>
-    <option>Pending</option>
-    <option>Answered</option>
-  </select>
-  <button>Add Notes</button>
-  <button>Upload PYQ</button>
-</div>
-<div class="table-box">
-  <h2>Latest Questions</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Class</th>
-        <th>Subject</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="questionsTable">
-      <tr>
-        <td colspan="5">Loading...</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-</div>
-
-<script type="module" src="script.js"></script>
-<script>
-    if (localStorage.getItem("adminLoggedIn") !== "true") {
-        window.location.href = "login.html";
-    }
-</script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
