@@ -33,7 +33,7 @@ window.logout = function() {
   window.location.href = "login.html";
 };
 
-// Initialize App Variables
+// Initialize App
 let db;
 
 function initFirebase() {
@@ -65,11 +65,56 @@ function initFirebase() {
       initFirebase();
       setupFormListeners();
       loadAdminPublishedAnswers();
+      loadStudentQuestions();
+      loadDashboardStats();
     };
     document.head.appendChild(script2);
   };
   document.head.appendChild(script1);
 })();
+
+// Real-Time Dashboard Overview Numbers
+async function loadDashboardStats() {
+  if (!db) return;
+
+  try {
+    const qSnapshot = await db.collection('questions').get();
+    let publishedCount = 0;
+    let studentQCount = 0;
+    let unansweredCount = 0;
+
+    qSnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.type === 'article' || data.published === true) {
+        publishedCount++;
+      } else {
+        studentQCount++;
+        if (data.status !== 'answered') {
+          unansweredCount++;
+        }
+      }
+    });
+
+    const elPublished = document.getElementById('stat-published-answers');
+    const elStudentQ = document.getElementById('stat-student-questions');
+    const elUnanswered = document.getElementById('stat-unanswered');
+
+    if (elPublished) elPublished.innerText = publishedCount;
+    if (elStudentQ) elStudentQ.childNodes[0].nodeValue = studentQCount + " ";
+    if (elUnanswered) elUnanswered.innerText = unansweredCount;
+
+    const notesSnapshot = await db.collection('notes').get();
+    const elNotes = document.getElementById('stat-notes');
+    if (elNotes) elNotes.innerText = notesSnapshot.size;
+
+    const pyqSnapshot = await db.collection('pyqs').get();
+    const elPyqs = document.getElementById('stat-pyqs');
+    if (elPyqs) elPyqs.innerText = pyqSnapshot.size;
+
+  } catch (err) {
+    console.error("Error loading dashboard stats:", err);
+  }
+}
 
 // Load Published Answers
 async function loadAdminPublishedAnswers() {
@@ -104,7 +149,43 @@ async function loadAdminPublishedAnswers() {
 
   } catch (err) {
     console.error("Error loading answers:", err);
-    container.innerHTML = '<p style="color: red;">Failed to load published items: ' + err.message + '</p>';
+  }
+}
+
+// Load Student Questions
+async function loadStudentQuestions() {
+  const container = document.getElementById('student-questions-list');
+  if (!container || !db) return;
+
+  try {
+    const snapshot = await db.collection('questions').get();
+    container.innerHTML = '';
+
+    let count = 0;
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.type !== 'article' && data.published !== true) {
+        count++;
+        const isAnswered = data.status === 'answered';
+        const card = document.createElement('div');
+        card.style.cssText = `background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid ${isAnswered ? '#10b981' : '#f59e0b'};`;
+        card.innerHTML = `
+          <div style="font-size: 12px; color: #64748b; margin-bottom: 5px; display: flex; justify-content: space-between;">
+            <span><strong>${data.subject || 'General'}</strong> | Student Doubt</span>
+            <span style="font-weight: bold; color: ${isAnswered ? '#10b981' : '#f59e0b'};">${isAnswered ? '✅ Answered' : '⏳ Unanswered'}</span>
+          </div>
+          <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 8px;">${data.question}</h3>
+        `;
+        container.appendChild(card);
+      }
+    });
+
+    if (count === 0) {
+      container.innerHTML = '<p style="color: #64748b;">No new questions submitted by students yet.</p>';
+    }
+
+  } catch (err) {
+    console.error("Error loading student questions:", err);
   }
 }
 
@@ -129,6 +210,7 @@ function setupFormListeners() {
         publishForm.reset();
         window.toggleAddForm();
         loadAdminPublishedAnswers();
+        loadDashboardStats();
       } catch (err) { alert('Error publishing answer: ' + err.message); }
     });
   }
@@ -151,6 +233,7 @@ function setupFormListeners() {
         alert('🚀 Note published successfully!');
         noteForm.reset();
         window.toggleNotesForm();
+        loadDashboardStats();
       } catch (err) { alert('Error publishing note: ' + err.message); }
     });
   }
@@ -172,6 +255,7 @@ function setupFormListeners() {
         alert('🚀 PYQ published successfully!');
         pyqForm.reset();
         window.togglePyqForm();
+        loadDashboardStats();
       } catch (err) { alert('Error publishing PYQ: ' + err.message); }
     });
   }
