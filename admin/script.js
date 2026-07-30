@@ -19,7 +19,6 @@ window.toggleAddForm = function(isEdit = false) {
   const box = document.getElementById('add-answer-form-box');
   if (box) {
     if (!isEdit && box.style.display !== 'none') {
-      // Reset if closing or opening fresh
       document.getElementById('publish-answer-form').reset();
       editingAnswerId = null;
     }
@@ -125,7 +124,7 @@ async function loadDashboardStats() {
   }
 }
 
-// Load Published Answers with Edit & Delete Options
+// Load Published Answers
 async function loadAdminPublishedAnswers() {
   const container = document.getElementById('admin-answers-list');
   if (!container || !db) return;
@@ -206,12 +205,11 @@ window.deleteAnswer = async function(id) {
   }
 };
 
-// Load Student Questions
+// Load Real-time Student Questions
 function loadStudentQuestions() {
   const container = document.getElementById('student-questions-list');
   if (!container || !db) return;
 
-  // Real-time listener: Jaise hi naya question aayega, yahan turant dikhega
   db.collection('questions').onSnapshot((snapshot) => {
     container.innerHTML = '';
     let count = 0;
@@ -242,13 +240,8 @@ function loadStudentQuestions() {
     console.error("Error loading student questions:", err);
   });
 }
-  } catch (err) {
-    console.error("Error loading student questions:", err);
-  }
-}
 
 function setupFormListeners() {
-  // Answers Form (Publish or Update)
   const publishForm = document.getElementById('publish-answer-form');
   if (publishForm) {
     publishForm.addEventListener('submit', async (e) => {
@@ -267,12 +260,10 @@ function setupFormListeners() {
 
       try {
         if (editingAnswerId) {
-          // Update existing doc
           await db.collection('questions').doc(editingAnswerId).update(payload);
           alert('🚀 Answer updated successfully!');
           editingAnswerId = null;
         } else {
-          // Add new doc
           payload.createdAt = new Date().toISOString();
           await db.collection('questions').add(payload);
           alert('🚀 Answer published successfully!');
@@ -286,7 +277,6 @@ function setupFormListeners() {
     });
   }
 
-  // Notes Form
   const noteForm = document.getElementById('publish-note-form');
   if (noteForm) {
     noteForm.addEventListener('submit', async (e) => {
@@ -309,7 +299,6 @@ function setupFormListeners() {
     });
   }
 
-  // PYQ Form
   const pyqForm = document.getElementById('publish-pyq-form');
   if (pyqForm) {
     pyqForm.addEventListener('submit', async (e) => {
