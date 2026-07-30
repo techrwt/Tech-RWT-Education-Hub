@@ -119,7 +119,6 @@ const db = firebase.firestore();
 const container=document.getElementById("notes-list");
 
 db.collection("notes")
-  .orderBy("createdAt", "desc")
   .onSnapshot(snapshot => {
     container.innerHTML = "";
     if (snapshot.empty) {
