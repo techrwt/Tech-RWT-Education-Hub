@@ -118,31 +118,33 @@ const db = firebase.firestore();
 
 const container=document.getElementById("notes-list");
 
-db.collection("notes")
-  .onSnapshot(snapshot => {
-    container.innerHTML = "";
-    if (snapshot.empty) {
-      container.innerHTML = "<div class='empty'>No Notes Available Yet.</div>";
-      return;
-    }
-    snapshot.forEach(doc => {
-  const note = doc.data();
-  container.innerHTML += `
-    <div class="card">
-      <h3>${note.title || "Untitled"}</h3>
-      <div class="info">
-        <strong>Class/Category:</strong> ${note.class || note.category || "-"}
+const urlParams = new URLSearchParams(window.location.search);
+const selectedSubject = urlParams.get('subject');
+
+let query = db.collection("notes");
+
+if (selectedSubject) {
+  query = query.where("subject", "==", selectedSubject);
+}
+
+query.onSnapshot(snapshot => {
+  container.innerHTML = "";
+  if (snapshot.empty) {
+    container.innerHTML = `<div class='empty'>No notes available for ${selectedSubject || "all subjects"}.</div>`;
+    return;
+  }
+  snapshot.forEach(doc => {
+    const note = doc.data();
+    container.innerHTML += `
+      <div class="card">
+        <h3>${note.title || "Untitled Note"}</h3>
+        <div class="info"><strong>Class/Category:</strong> ${note.class || note.category || "-"}</div>
+        <div class="info"><strong>Subject:</strong> ${note.subject || "-"}</div>
+        <a class="btn" href="${note.link || note.pdfLink || '#'}" target="_blank">📄 Open PDF</a>
       </div>
-      <div class="info">
-        <strong>Subject:</strong> ${note.subject || "-"}
-      </div>
-      <a class="btn" href="${note.link || note.pdfLink || '#'}" target="_blank">
-        📄 Open PDF
-      </a>
-    </div>
-  `;
-});
+    `;
   });
+});
 </script>
 
 </body>
