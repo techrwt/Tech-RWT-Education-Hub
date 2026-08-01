@@ -1,1 +1,49 @@
-<h1>Coming Soon</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class 10 - Tech RWT Education Hub</title>
+  <link rel="stylesheet" href="../style.css">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>📘 Class 10 Resources</h1>
+    <a href="../index.html" class="btn">🏠 Home</a>
+  </header>
+
+  <main class="container">
+    <!-- SECTION 1: NOTES -->
+    <section class="section-box">
+      <h2>📝 Notes</h2>
+      <div id="notes-list" class="grid-container">Loading Notes...</div>
+    </section>
+
+    <!-- SECTION 2: PYQ -->
+    <section class="section-box">
+      <h2>📄 Previous Year Questions (PYQ)</h2>
+      <div id="pyq-list" class="grid-container">Loading PYQs...</div>
+    </section>
+
+    <!-- SECTION 3: IMPORTANT PYQ -->
+    <section class="section-box">
+      <h2>⭐ Important PYQ</h2>
+      <div id="important-pyq-list" class="grid-container">Loading Important PYQs...</div>
+    </section>
+  </main>
+
+  <script src="../script.js"></script>
+  <script>
+    // Fetch and display Class 10 items when page loads
+    document.addEventListener("DOMContentLoaded", () => {
+      if (typeof loadClassData === "function") {
+        loadClassData("class-10");
+      }
+    });
+  </script>
+</body>
+</html>
