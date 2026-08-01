@@ -83,3 +83,72 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { once: false });
   }
 });
+// Function to load filtered data for Class Pages (Notes, PYQ, Important PYQ)
+async function loadClassData(selectedCategory) {
+  const notesContainer = document.getElementById("notes-list");
+  const pyqContainer = document.getElementById("pyq-list");
+  const importantPyqContainer = document.getElementById("important-pyq-list");
+
+  // 1. Fetch Notes
+  if (notesContainer) {
+    db.collection("notes")
+      .where("category", "==", selectedCategory)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          notesContainer.innerHTML = "<p>No Notes available for this class.</p>";
+          return;
+        }
+        let html = "";
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          html += `<div class="card">
+            <h3>${data.title || "Note"}</h3>
+            <p>Subject: ${data.subject || "N/A"}</p>
+            <a href="${data.link}" target="_blank" class="btn">View PDF</a>
+          </div>`;
+        });
+        notesContainer.innerHTML = html;
+      })
+      .catch((err) => {
+        notesContainer.innerHTML = "<p>Error loading notes.</p>";
+      });
+  }
+
+  // 2. Fetch PYQs and Important PYQs
+  if (pyqContainer || importantPyqContainer) {
+    db.collection("pyqs")
+      .where("category", "==", selectedCategory)
+      .get()
+      .then((snapshot) => {
+        let pyqHtml = "";
+        let importantPyqHtml = "";
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const cardHtml = `<div class="card">
+            <h3>${data.title || "PYQ"}</h3>
+            <p>Subject: ${data.subject || "N/A"}</p>
+            <a href="${data.link}" target="_blank" class="btn">View PDF</a>
+          </div>`;
+
+          if (data.pyqType === "important-pyq") {
+            importantPyqHtml += cardHtml;
+          } else {
+            pyqHtml += cardHtml;
+          }
+        });
+
+        if (pyqContainer) {
+          pyqContainer.innerHTML = pyqHtml || "<p>No PYQs available for this class.</p>";
+        }
+        if (importantPyqContainer) {
+          importantPyqContainer.innerHTML = importantPyqHtml || "<p>No Important PYQs available for this class.</p>";
+        }
+      })
+      .catch((err) => {
+        if (pyqContainer) pyqContainer.innerHTML = "<p>Error loading PYQs.</p>";
+        if (importantPyqContainer) importantPyqContainer.innerHTML = "<p>Error loading Important PYQs.</p>";
+      });
+  }
+}
