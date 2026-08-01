@@ -44,30 +44,30 @@
         const db = firebase.firestore();
         const container = document.getElementById("pyq-list");
 
-        db.collection("pyqs")
+        db.collection("pyqs").where("pyqType", "==", "pyq")
           .onSnapshot(snapshot => {
             container.innerHTML = "";
             if (snapshot.empty) {
                 container.innerHTML = "<div class='empty'>No PYQs Available Yet.</div>";
                 return;
             }
-            snapshot.forEach(doc => {
-                const pyq = doc.data();
-                container.innerHTML += `
-                    <div class="card">
-                        <h3>${pyq.title || "Untitled"}</h3>
-                        <div class="info">
-                            <strong>Class:</strong> ${pyq.class || "-"}
-                        </div>
-                        <div class="info">
-                            <strong>Subject:</strong> ${pyq.subject || "-"}
-                        </div>
-                        <a class="btn" href="${pyq.link || pyq.pdfLink}" target="_blank">
-                            📄 Open PYQ PDF
-                        </a>
-                    </div>
-                `;
-            });
+snapshot.forEach(doc => {
+        const pyq = doc.data();
+        container.innerHTML += `
+          <div class="card">
+            <h3>${pyq.title || "Untitled"}</h3>
+            <div class="info">
+              <strong>Class/Category:</strong> ${pyq.class || pyq.category || "-"}
+            </div>
+            <div class="info">
+              <strong>Subject:</strong> ${pyq.subject || "-"}
+            </div>
+            <a class="btn" href="${pyq.link || pyq.pdfLink || '#'}" target="_blank">
+              📄 Open PYQ PDF
+            </a>
+          </div>
+        `;
+      });
         });
     </script>
 </body>
