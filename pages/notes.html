@@ -126,22 +126,22 @@ db.collection("notes")
       return;
     }
     snapshot.forEach(doc => {
-      const note = doc.data();
-      container.innerHTML += `
-        <div class="card">
-          <h3>${note.title || "Untitled"}</h3>
-          <div class="info">
-            <strong>Class:</strong> ${note.class || "-"}
-          </div>
-          <div class="info">
-            <strong>Subject:</strong> ${note.subject || "-"}
-          </div>
-          <a class="btn" href="${note.link || note.pdfLink}" target="_blank">
-            📄 Open PDF
-          </a>
-        </div>
-      `;
-    });
+  const note = doc.data();
+  container.innerHTML += `
+    <div class="card">
+      <h3>${note.title || "Untitled"}</h3>
+      <div class="info">
+        <strong>Class/Category:</strong> ${note.class || note.category || "-"}
+      </div>
+      <div class="info">
+        <strong>Subject:</strong> ${note.subject || "-"}
+      </div>
+      <a class="btn" href="${note.link || note.pdfLink || '#'}" target="_blank">
+        📄 Open PDF
+      </a>
+    </div>
+  `;
+});
   });
 </script>
 
