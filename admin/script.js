@@ -362,7 +362,7 @@ function setupFormListeners() {
           category: document.getElementById('pyq-category').value,
           subject: document.getElementById('pyq-subject').value.trim(),
           link: document.getElementById('pyq-link').value.trim(),
-          type: 'pyq',
+          pyqType: document.getElementById('pyq-type').value,
           createdAt: new Date().toISOString()
         });
         alert('🚀 PYQ published successfully!');
